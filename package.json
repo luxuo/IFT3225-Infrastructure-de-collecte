@@ -15,12 +15,15 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
+    "bridge": "node bridge.js",
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "mongoose": "^9.6.3"
+    "mongoose": "^9.6.3",
+    "readline": "^1.3.0",
+    "validator": "^13.15.35"
   }
 }
