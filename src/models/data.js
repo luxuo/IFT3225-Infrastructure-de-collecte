@@ -64,9 +64,16 @@ const dataSchema = new mongoose.Schema({
         trim:true,
         lowercase:true,
         enum:{
-            values:['transport', 'restauration', 'commerce', 'regroupement', 'industriel', 'communautaire', 'institutionnel'],
-            message:'{VALUE} n\'est pas valide. Doit être [transport, restauration, commerce, regroupement, industriel, communautaire, institutionnel]'
+            values:['transport', 'restauration', 'commerce', 'regroupement', 'industriel', 'communautaire', 'institutionnel', 'personnel'],
+            message:'{VALUE} n\'est pas valide. Doit être [transport, restauration, commerce, regroupement, industriel, communautaire, institutionnel, personnel]'
         }
+    },
+    location:{
+        type:String,
+        required: true,
+        trim:true,
+        lowercase:true,
+        match: /^[a-z]{4,20}$/
     }
 }, {
     strict: "throw"
