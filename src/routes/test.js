@@ -3,8 +3,8 @@ const router = new express.Router();
 
 
 // READ
-router.get("/test", async (req, res) => {
-    return res.status(200)
+router.get("/", (req, res) => {
+    res.send({"hello":"world"});
 });
 
 module.exports = router
