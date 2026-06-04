@@ -3,11 +3,11 @@ const validator = require("validator");
 
 const dataSchema = new mongoose.Schema({
     noise_buffer:{
-        type:[Double],
+        type:[mongoose.Schema.Types.Double],
         required: true
     },
     time_buffer:{
-        type:[Double],
+        type:[mongoose.Schema.Types.Double],
         required: true,
         validator (v){
             if (v.length != this.noise_buffer.length){
@@ -39,7 +39,7 @@ const dataSchema = new mongoose.Schema({
         required: true,
     },
     source_distance:{
-        type:Double,
+        type:mongoose.Schema.Types.Double,
         required: true,
         validate (v) {
             if (v < 0){
@@ -59,7 +59,7 @@ const dataSchema = new mongoose.Schema({
         
     },
     setting:{
-        type:Number,
+        type:String,
         required: true,
         trim:true,
         lowercase:true,
