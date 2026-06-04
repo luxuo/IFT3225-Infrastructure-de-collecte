@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 async function connectDB() {
     await mongoose.connect(process.env.MONGO_URL);
-    console.log("BDD connectée !");
+    console.log("BD connectée !");
 }
 
 module.exports = {

@@ -1,12 +1,15 @@
 require("dotenv").config();
-const testRoutes = require("./src/routes/test");
+const routes = require("./src/routes/routes");
 const express = require("express");
+const { connectDB } = require("./src/services/mongoose");
+
+connectDB().catch(err => console.log(err));
 
 const app = express();
 const port = process.env.PORT || 8383;
 
 app.use(express.json());
-app.use(testRoutes);
+app.use(routes);
 
 app.use((req, res) => {
     return res.status(404).json({
