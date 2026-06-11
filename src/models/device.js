@@ -1,6 +1,7 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 const validator = require("validator");
-const brypt = require("bcryptjs");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 
@@ -14,7 +15,8 @@ const deviceSchema = new mongoose.Schema({
     },
     username:{
         type:String,
-        required: true,
+        unique:true,
+        required: true
     },
     password:{
         type:String,
@@ -31,7 +33,7 @@ const deviceSchema = new mongoose.Schema({
 deviceSchema.methods.toJSON = function(){
     const device = this.toObject();
     delete device.password;
-    delete device.auToken;
+    delete device.authToken;
     return device;
 }
 

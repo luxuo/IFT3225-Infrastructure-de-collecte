@@ -15,7 +15,17 @@ router.post("/devices", async (req, res) => {
     }
 });
 
-// GET
+// GET DEVICES
+router.get("/devices", async (req,res) =>{
+    try{
+        const devices = await Device.find({});
+        res.send(devices);
+    }catch (err){
+        res.status(500).send(err);
+    }
+});
+
+// GET TOKEN
 router.get("/devices/token", async (req,res) => {
     try{
         const device = await Device.findDevice(req.body.username, req.body.password);
@@ -29,7 +39,7 @@ router.get("/devices/token", async (req,res) => {
 // UPDATE
 router.patch("/devices", async (req,res) => {
     const allowedUpdates = ["location", "password"];
-    const requestedUpdates = Object.keys(req.body);
+    const requestedUpdates = Object.keys(req.body.update);
     const isValidOperation = requestedUpdates.every(update => allowedUpdates.includes(update));
     if (!isValidOperation){
         return res.status(400).send({error: "Tentative de modification de champs non autorisés"});
@@ -38,7 +48,7 @@ router.patch("/devices", async (req,res) => {
         const device = await Device.findDevice(req.body.username, req.body.password);
         try{
             requestedUpdates.forEach(update => {
-                device[update] = req.body[update];
+                device[update] = req.body.update[update];
             })
             await device.save();
             res.send(device);
@@ -62,7 +72,7 @@ router.delete("/devices", async (req, res) =>{
         }catch (err){
             res.status(500).send(err);
         }
-    }catch{err}{
+    }catch(err){
         res.status(401).send(err);
     }
 });
