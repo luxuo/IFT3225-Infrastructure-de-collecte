@@ -29,7 +29,7 @@ router.get("/devices", async (req,res) =>{
 router.get("/devices/token", async (req,res) => {
     try{
         const device = await Device.findDevice(req.body.username, req.body.password);
-        res.send({device, token});
+        res.send({device, authToken:device.authToken});
     }catch (err){
         res.status(400).send(err);
     }
