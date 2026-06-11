@@ -26,7 +26,7 @@ router.get("/devices", async (req,res) =>{
 });
 
 // GET TOKEN
-router.get("/devices/token", async (req,res) => {
+router.post("/devices/token", async (req,res) => {
     try{
         const device = await Device.findDevice(req.body.username, req.body.password);
         res.send({device, authToken:device.authToken});

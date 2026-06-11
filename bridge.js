@@ -24,7 +24,7 @@ async function postData(data, authToken){
         body:JSON.stringify(data),
         headers:{
             "Content-type": "application/json; charset=UTF-8",
-            "Authorization": "Bearer " + authToken
+            "Authorization": `Bearer ${authToken}`
         }
     });
     console.log(res);
@@ -44,8 +44,25 @@ async function promptAttributes(){
     return data;
 }
 
+// login pour l'authToken
+async function promptLogin(){
+    const login = {}
+    login.username = await prompt("Nom d'utilisateur: ");
+    login.password = await prompt("Mot de passe: ");
+    const res = await fetch("http://localhost:"+process.env.PORT+"/devices/token", {
+        method:"POST",
+        body:JSON.stringify(login),
+        headers:{
+            "Content-type": "application/json; charset=UTF-8",
+        }
+    });
+    const body = await res.json();
+    return body.authToken;
+}
+
 // record and send
 async function recordAndSend(){
+    const authToken = await promptLogin();
     const data = await promptAttributes();
     const ip = await prompt('C\'est quoi l\'adresse ip du téléphone? Ex: 192.168.0.67:  ');
     const time_ms = parseInt(await prompt('Pendant combien de secondes voulez-vous faire la mesure?:  ')) * 1000;
@@ -56,7 +73,7 @@ async function recordAndSend(){
     data.timestamp = timestamp;
     data.noise_buffer = measures.dB.buffer;
     data.time_buffer = measures.time.buffer;
-    await postData(data);
+    await postData(data, authToken);
 }
+
 recordAndSend();
-exit();

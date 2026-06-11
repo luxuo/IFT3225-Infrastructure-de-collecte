@@ -5,10 +5,10 @@ const router = new express.Router();
 
 // CREATE
 router.post("/measurements", authentification, async (req, res) => {
-    const data = req.device;
+    const measurement = new Measurement(req.body);
     try {
-        await data.save();
-        res.status(201).send({ data });
+        await measurement.save();
+        res.status(201).send({ measurement });
         console.log("Création de la mesure effectuée avec succès !");
     } catch (e) {
         res.status(400).send(e);
