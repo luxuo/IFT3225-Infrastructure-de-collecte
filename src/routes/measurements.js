@@ -1,11 +1,11 @@
 const express = require("express");
-const Data = require("../models/data");
+const Measurement = require("../models/measurement");
+const authentification = require("../middleware/authentification")
 const router = new express.Router();
 
 // CREATE
-router.post("/measurements", async (req, res) => {
-    // TODO handle authentication
-    const data = new Data(req.body);
+router.post("/measurements", authentification, async (req, res) => {
+    const data = req.device;
     try {
         await data.save();
         res.status(201).send({ data });
@@ -14,5 +14,8 @@ router.post("/measurements", async (req, res) => {
         res.status(400).send(e);
     }
 });
+
+// GETTTERS
+// TODO
 
 module.exports = router;

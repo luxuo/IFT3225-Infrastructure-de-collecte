@@ -1,5 +1,4 @@
 const getMeasurements = require("./src/services/phyphox");
-const Data = require("./src/models/data");
 const readline = require("readline");
 const { exit } = require("process");
 require("dotenv").config();
@@ -19,13 +18,13 @@ const prompt = (prompt) => {
 };
 
 // post data
-async function postData(data){
+async function postData(data, authToken){
     const res = await fetch("http://localhost:"+process.env.PORT+"/measurements", {
         method:"POST",
         body:JSON.stringify(data),
         headers:{
             "Content-type": "application/json; charset=UTF-8",
-            "x-api-key": process.env.API_KEY
+            "Authorization": "Bearer " + authToken
         }
     });
     console.log(res);

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 
-const dataSchema = new mongoose.Schema({
+const measurementSchema = new mongoose.Schema({
     noise_buffer:{
         type:[mongoose.Schema.Types.Double],
         required: true
@@ -79,6 +79,6 @@ const dataSchema = new mongoose.Schema({
     strict: "throw"
 });
 
-const Data = mongoose.model('data', dataSchema);
+const Measurement = mongoose.model('Measurement', measurementSchema);
 
-module.exports = Data;
+module.exports = Measurement;
