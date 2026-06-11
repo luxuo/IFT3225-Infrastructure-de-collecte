@@ -1,6 +1,6 @@
 require("dotenv").config();
 const measurements = require("./src/routes/measurements");
-const device = require("./src/routes/measurements");
+const device = require("./src/routes/device");
 const express = require("express");
 const { connectDB } = require("./src/services/mongoose");
 
