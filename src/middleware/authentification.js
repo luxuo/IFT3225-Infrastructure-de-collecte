@@ -15,7 +15,7 @@ const authentification = async (req, res, next) => {
         req.device = device;
         next();
     }catch (err){
-        res.status(401).send("Device Authentifié");
+        res.status(401).send("Device Non-Authentifié");
     }
 };
 
