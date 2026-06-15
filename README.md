@@ -1,7 +1,7 @@
 # IFT3225-Infrastructure-de-collecte
 
 Serveur Express connecté à MongoDB Atlas qui collecte des données d'ambiance
-telles que niveau sonore, météo, achalandage avec l'aide de l'application Phyphox et les rend
+telles que niveau sonore ou météo avec l'aide de l'application Phyphox et les rend
 interrogeables via une API REST. Les données sont captées par une application téléphonique,
 acheminées par un bridge Node.js, et analysées par des
 endpoints sémantiques qui répondent à des questions concrètes sur l'ambiance et l'evironnement
