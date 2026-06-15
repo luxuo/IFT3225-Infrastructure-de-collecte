@@ -20,7 +20,7 @@ d'un lieu.
 
 ### 2. Installer les dépendances
 
-{content: npm install}
+npm install
 
 ### 3. Configurer les variables d'environnement
 
