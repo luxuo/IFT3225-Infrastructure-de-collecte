@@ -20,7 +20,7 @@ d'un lieu.
 
 ### 2. Installer les dépendances
 
-npm install
+{content: npm install}
 
 ### 3. Configurer les variables d'environnement
 
@@ -87,26 +87,12 @@ Réponse attendue (201) : { "measurement": { ... } }
 
 ### Étape 3 — Tester les endpoints sémantiques (aucun token requis)
 
-GET http://localhost:8383/measurements/ambiance/biblio/noise-level
-GET http://localhost:8383/measurements/ambiance/biblio/busy-hours
-GET http://localhost:8383/measurements/ambiance/biblio/quiet-hours
-GET http://localhost:8383/measurements/ambiance/biblio/crowdedness
-GET http://localhost:8383/measurements/ambiance/biblio/recommendation/lundi
-GET http://localhost:8383/measurements/ambiance/biblio/recommendation/horaire/calme
-
+GET /measurements/ambiance/:location/busy-hours
+GET /measurements/ambiance/:location/recommendation/:journee
+GET /measurements/ambiance/:location/recommendation/horaire/:ambiance
 
 ### Étape 4 — Tester les erreurs d'authentification
 
-Requête sans token → 401 :
+401 Probleme de token
 POST http://localhost:8383/measurements
 (sans header Authorization)
-
-Requête avec token invalide → 401 :
-POST http://localhost:8383/measurements
-Authorization: Bearer tokeninvalide
-
-## Ajout de fichier .env
-Dans le dossier root, créez un fichier nommé **.env** avec le contenu
-MONGO_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?appName=<AppName>
-PORT=8383
-PHRASE_PASS=<votre-phrase-secrete-jwt>
