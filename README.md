@@ -20,6 +20,7 @@ d'un lieu.
 
 ### 2. Installer les dépendances
 
+
 npm install
 
 ### 3. Configurer les variables d'environnement
@@ -93,6 +94,16 @@ GET /measurements/ambiance/:location/recommendation/horaire/:ambiance
 
 ### Étape 4 — Tester les erreurs d'authentification
 
-401 Probleme de token
+401 Probleme de token non existant:
 POST http://localhost:8383/measurements
 (sans header Authorization)
+
+401 de token invalide:
+POST http://localhost:8383/measurements
+Authorization: Bearer tokeninvalide
+
+## .env.example
+
+MONGO_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?appName=<AppName>
+PORT=8383
+PHRASE_PASS=<votre-phrase-secrete-jwt>
