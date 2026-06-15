@@ -65,8 +65,6 @@ Réponse attendue (201) :
 
 Copier la valeur de authToken pour les étapes suivantes.
 
----
-
 ### Étape 2 — Envoyer une mesure (route protégée)
 
 POST http://localhost:8383/measurements
@@ -87,8 +85,6 @@ Authorization: Bearer <authToken>
 
 Réponse attendue (201) : { "measurement": { ... } }
 
----
-
 ### Étape 3 — Tester les endpoints sémantiques (aucun token requis)
 
 GET http://localhost:8383/measurements/ambiance/biblio/noise-level
@@ -98,7 +94,6 @@ GET http://localhost:8383/measurements/ambiance/biblio/crowdedness
 GET http://localhost:8383/measurements/ambiance/biblio/recommendation/lundi
 GET http://localhost:8383/measurements/ambiance/biblio/recommendation/horaire/calme
 
----
 
 ### Étape 4 — Tester les erreurs d'authentification
 
@@ -112,4 +107,6 @@ Authorization: Bearer tokeninvalide
 
 ## Ajout de fichier .env
 Dans le dossier root, créez un fichier nommé **.env** avec le contenu
-` PORT=8383 `
+MONGO_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?appName=<AppName>
+PORT=8383
+PHRASE_PASS=<votre-phrase-secrete-jwt>
