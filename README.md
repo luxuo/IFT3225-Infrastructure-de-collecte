@@ -31,9 +31,11 @@ Copier le fichier d'exemple et remplir les valeurs :
 
 Ouvrir .env et remplir :
 
-```MONGO_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?appName=<AppName>
+```
+MONGO_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?appName=<AppName>
 PORT=8383
-PHRASE_PASS= <phrase_pass>```
+PHRASE_PASS= <phrase_pass>
+```
 
 ### 4. Lancer le serveur
 
@@ -49,7 +51,8 @@ Le serveur écoute sur http://localhost:8383
 
 ### Étape 1 — Créer un appareil et récupérer un token
 
-```POST http://localhost:8383/devices
+```
+POST http://localhost:8383/devices
 Content-Type: application/json
 
 {
@@ -58,17 +61,22 @@ Content-Type: application/json
   "location": "biblio"
 }
 ```
+
 Réponse attendue (201) :
-```{
+
+```
+{
   "device": { "_id": "...", "username": "monAppareil", "location": "biblio" },
   "authToken": "eyJ..."
 }
 ```
+
 Copier la valeur de authToken pour les étapes suivantes.
 
 ### Étape 2 — Envoyer une mesure (route protégée)
 
-```POST http://localhost:8383/measurements
+```
+POST http://localhost:8383/measurements
 Content-Type: application/json
 Authorization: Bearer <authToken>
 
@@ -84,28 +92,35 @@ Authorization: Bearer <authToken>
   "location": "biblio"
 }
 ```
+
 Réponse attendue (201) : 
+
 ```{ "measurement": { ... } }```
 
 ### Étape 3 — Tester les endpoints sémantiques (aucun token requis)
 
 `GET /measurements/ambiance/:location/busy-hours`
+
 `GET /measurements/ambiance/:location/recommendation/:journee`
+
 `GET /measurements/ambiance/:location/recommendation/horaire/:ambiance`
 
 ### Étape 4 — Tester les erreurs d'authentification
 
-```401 Probleme de token non existant:
+```
+401 Probleme de token non existant:
 POST http://localhost:8383/measurements
 (sans header Authorization)
 ```
 
-```401 de token invalide:
+```
+401 de token invalide:
 POST http://localhost:8383/measurements
 Authorization: Bearer tokeninvalide
 ```
 
 ## .env.example
+
 ```
 MONGO_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?appName=<AppName>
 PORT=8383
