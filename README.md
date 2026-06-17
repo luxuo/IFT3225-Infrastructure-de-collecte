@@ -46,7 +46,8 @@ Le serveur écoute sur http://localhost:8383
 
 <img width="782" height="342" alt="image" src="https://github.com/user-attachments/assets/c98f18dd-cb34-48ab-9a61-d80d0ab4f07b" />
 <img width="776" height="531" alt="image" src="https://github.com/user-attachments/assets/2a8bba3d-51c1-4bbd-8575-1b07f33948a9" />
-<img width="783" height="546" alt="image" src="https://github.com/user-attachments/assets/e9b82aa5-494d-4dbd-a94a-ee2d6ac45367" />
+<img width="795" height="547" alt="image" src="https://github.com/user-attachments/assets/f0b2ef5e-d1fa-4535-910e-8c25628a295a" />
+
 
 ## Tests avec Postman
 
