@@ -48,6 +48,35 @@ Le serveur écoute sur http://localhost:8383
 <img width="776" height="531" alt="image" src="https://github.com/user-attachments/assets/2a8bba3d-51c1-4bbd-8575-1b07f33948a9" />
 <img width="795" height="547" alt="image" src="https://github.com/user-attachments/assets/f0b2ef5e-d1fa-4535-910e-8c25628a295a" />
 
+## How to run bridge script
+
+Le bridge est le script qui connecte le téléphone (Phyphox) au serveur.
+
+### étape 1: 
+
+Lancer le script avec "npm start"
+
+### Lancer le bridge
+
+```
+npm run bridge
+```
+
+Une série de questions sera posée. Veuillez répondre selon l'information collectée et votre besoin. 
+Veuillez avoir en main votre authToken.
+
+### Mode automatique (Phyphox)
+
+- Ouvrir Phyphox sur le téléphone
+- Lancer "Niveau sonore"
+- Activer l'accès à distance sur Phyphox
+- Entrer l'adresse IP affichée par Phyphox quand le script la demande
+- Le bridge enregistre automatiquement pendant quelques secondes, puis envoie les données
+
+### Mode manuel
+
+Si le téléphone est indisponible ou le réseau non partagé, choisir "manuel".
+Le script demande les valeurs audio directement et envoie la mesure sans Phyphox.
 
 ## Tests avec Postman
 
