@@ -18,8 +18,9 @@ d'un lieu.
 
 ### 1. cloner le repertoire Github
 
-### 2. Installer les dépendances
+Via HTTP: `git clone https://github.com/luxuo/IFT3225-Infrastructure-de-collecte.git`
 
+### 2. Installer les dépendances
 
 `npm install`
 
@@ -99,11 +100,12 @@ Réponse attendue (201) :
 
 ### Étape 3 — Tester les endpoints sémantiques (aucun token requis)
 
+
 `GET /measurements/ambiance/:location/busy-hours`
 
-`GET /measurements/ambiance/:location/recommendation/:journee`
+`GET /measurements/ambiance/:location/recommendation?type=etude&jour={jour de la semaine}`
 
-`GET /measurements/ambiance/:location/recommendation/horaire/:ambiance`
+`GET /measurements/ambiance/:location/:ambiance`
 
 ### Étape 4 — Tester les erreurs d'authentification
 

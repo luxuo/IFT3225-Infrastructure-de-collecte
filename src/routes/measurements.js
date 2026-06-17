@@ -15,10 +15,24 @@ router.post("/measurements", authentification, async (req, res) => {
     }
 });
 
-// SEMANTIC ENDPOINTS
-router.get("/measurements/ambiance/:location/busy-hours", async (req, res) => {
+// ENDPOINTS DE RESSOURCE
+router.get("/measurements/:location", async (req,res) => {
     const location = req.params.location.trim().toLowerCase();
+    const measurements = await Measurement.find({ location });
 
+    if (!measurements || measurements.length === 0) { // pas de mesures
+        return res.status(404).json({
+            error: `Aucune mesure trouvée pour l'emplacement : '${location}'`
+        });
+    }
+    res.send({location,measurements});
+});
+
+// ENDPOINTS SÉMANTIQUE
+
+// Get les heures d'achallandage
+router.get("/measurements/:location/busy-hours", async (req, res) => {
+    const location = req.params.location.trim().toLowerCase();
     const measurement = await Measurement.find({ location });
 
     if (!measurement || measurement.length === 0) { // pas de mesures
@@ -87,10 +101,16 @@ router.get("/measurements/ambiance/:location/busy-hours", async (req, res) => {
 
 });
 
-router.get("/measurements/ambiance/:location/recommendation/:journee", async (req, res) => {
+// Get l'heure de recommandation pour l'étude pour la journée
+// /measurements/:location/recommendation?type=study&jour=lundi
+router.get("/measurements/:location/recommendation", async (req, res) => {
     try {
         const location = req.params.location.trim().toLowerCase();
-        const journee = req.params.journee.trim().toLowerCase();
+        const journee = req.query.jour.trim().toLowerCase();
+
+        if (req.query.type.toLowerCase() != "etude" && req.query.type.toLowerCase() != "study"){
+            return res.status(400).send({error: "type de requête pas supportée. Types supportés: type=etude ou type=study]"});
+        }
 
 
         const joursSemaine = {
@@ -177,7 +197,7 @@ router.get("/measurements/ambiance/:location/recommendation/:journee", async (re
     }
 });
 
-router.get("/measurements/ambiance/:location/recommendation/horaire/:ambiance", async (req, res) => {
+router.get("/measurements/:location/:ambiance", async (req, res) => {
     try {
         const location = req.params.location.trim().toLowerCase();
         const targetAmbiance = req.params.ambiance.trim().toLowerCase();
@@ -247,7 +267,7 @@ router.get("/measurements/ambiance/:location/recommendation/horaire/:ambiance", 
 
     } catch (e) {
         console.error(e);
-        return res.status(500).json({ error: "Erreur" });
+        return res.status(500).json({ error: "Erreur de serveur interne" });
     }
 });
 
