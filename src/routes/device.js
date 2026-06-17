@@ -67,7 +67,7 @@ router.delete("/devices", async (req, res) =>{
         const device = await Device.findDevice(req.body.username, req.body.password);
         try{
             await device.deleteOne();
-            res.send(device);
+            res.status(204).send({});
             console.log("Suppression d'utilisateur effectué avec succès");
         }catch (err){
             res.status(500).send(err);
