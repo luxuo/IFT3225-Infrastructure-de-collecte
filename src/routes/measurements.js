@@ -101,6 +101,98 @@ router.get("/measurements/:location/busy-hours", async (req, res) => {
 
 });
 
+// get le niveau de densité de population selon l'heure
+router.get("/measurements/:location/crowdedness", async (req, res) => {
+    try {
+        const location = req.params.location.trim().toLowerCase();
+
+        const measurements = await Measurement.find({ location });
+
+        if (!measurements || measurements.length === 0) {
+            return res.status(404).json({
+                error: `Aucune mesure trouvée pour l'emplacement : '${location}'`
+            });
+        }
+
+        const hourlyData = Array.from({ length: 24 }, (_, hour) => ({
+            hour,
+            totalPeopleSum: 0,
+            totalPeopleCount: 0
+        }));
+
+        measurements.forEach(m => {
+            const date = new Date(m.timestamp);
+
+            if (Number.isNaN(date.getTime())) {
+                return;
+            }
+
+            const hour = date.getUTCHours();
+            const peopleCount = Number(m.surrounding_people);
+
+            if (!Number.isNaN(peopleCount) && peopleCount >= 0) {
+                hourlyData[hour].totalPeopleSum += peopleCount;
+                hourlyData[hour].totalPeopleCount += 1;
+            }
+        });
+
+        const crowdedHours = hourlyData
+            .filter(item => item.totalPeopleCount > 0)
+            .map(item => {
+                const averagePeople = Math.round(item.totalPeopleSum / item.totalPeopleCount);
+
+                const startStr = item.hour < 10 ? `0${item.hour}:00` : `${item.hour}:00`;
+                const endHour = item.hour + 1;
+                const endStr = endHour < 10 ? `0${endHour}:00` : `${endHour}:00`;
+
+                let crowdedness = "vide";
+
+                if (averagePeople === 0) {
+                    crowdedness = "vide";
+                } else if (averagePeople < 7) {
+                    crowdedness = "faible";
+                } else if (averagePeople < 14) {
+                    crowdedness = "moyen";
+                } else {
+                    crowdedness = "eleve";
+                }
+
+                return {
+                    period: `${startStr}-${endStr}`,
+                    averagePeople,
+                    crowdedness
+                };
+            })
+            .sort((a, b) => b.averagePeople - a.averagePeople)
+            .slice(0, 2);
+
+        if (crowdedHours.length === 0) {
+            return res.status(200).json({
+                location,
+                period: "par heure",
+                crowdedness: [],
+                summary: "Pas assez de données sur l'achalandage pour identifier les périodes les plus occupées."
+            });
+        }
+
+        const topPeriods = crowdedHours.map(p => p.period);
+
+        return res.status(200).json({
+            location,
+            period: "par heure",
+            crowdedness: crowdedHours,
+            summary: `Les périodes les plus occupées sont généralement entre ${topPeriods.join(" et ")}.`
+        });
+
+    } catch (e) {
+        console.error(e);
+
+        return res.status(500).json({
+            error: "Erreur lors du calcul de l'achalandage."
+        });
+    }
+});
+
 // Get l'heure de recommandation pour l'étude pour la journée
 // /measurements/:location/recommendation?type=study&jour=lundi
 router.get("/measurements/:location/recommendation", async (req, res) => {
