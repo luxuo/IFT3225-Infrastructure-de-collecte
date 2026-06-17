@@ -52,8 +52,6 @@ Le serveur écoute sur http://localhost:8383
 
 Le bridge est le script qui connecte le téléphone (Phyphox) au serveur.
 
-### étape 1: 
-
 Lancer le script avec "npm start"
 
 ### Lancer le bridge
