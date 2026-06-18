@@ -82,7 +82,7 @@ Une fois exécuté, si aucun message d'ajout de données n'a été fait, ceci es
 
 ### Enpoints de device.js
 
-*Création de device*
+**Création de device**
 
 ```
 POST http://localhost:8383/devices
@@ -104,7 +104,7 @@ Réponse attendue (201) :
 }
 ```
 
-*Pour récupérer le token, comme un login*
+**Pour récupérer le token, comme un login**
 
 ```
 POST http://localhost:8383/devices/token
@@ -125,7 +125,7 @@ Réponse attendue (200):
 }
 ```
 
-*Pour voir tous les devices*
+**Pour voir tous les devices**
 
 `GET http://localhost:8383/devices`
 
@@ -138,7 +138,7 @@ Réponse attendue (200):
 ]
 ```
 
-*Pour changer de location ou de mot de passe:*
+**Pour changer de location ou de mot de passe:**
 
 ```
 PATCH http://localhost:8383/devices
@@ -159,7 +159,7 @@ Réponse attendue (200):
 }
 ```
 
-*Pour supprimer un device*
+**Pour supprimer un device**
 
 ```
 DELETE http://localhost:8383/devices
@@ -202,12 +202,26 @@ Réponse attendue (201) :
 
 ### Enpoints fonctionnels des mesures (aucun token requis)
 
-`GET /measurements/ambiance/:location` -> 200: `[ {device1}, ... ]`
+**Mesures d'un lieu**
+
+`GET /measurements/:location` 
+
+Réponse attendue (200): 
+
+```
+{
+  location:"cafe"
+  measurements:[
+    {mesure1},
+    ...
+  ]
+}
+```
 
 
 ### Endpoints sémantiques (aucun token requis)
 
-*Heures de pointe*
+**Heures de pointe**
 
 `GET /measurements/ambiance/:location/busy-hours`
 
@@ -232,7 +246,7 @@ Réponse attendue (200) :
 }
 ```
 
-*Recommandation d'étude pour un lieu à un tel jour de la semaine*
+**Recommandation d'étude pour un lieu à un tel jour de la semaine**
 
 `GET /measurements/ambiance/:location/recommendation?type=etude&jour=lundi`
 
@@ -248,7 +262,7 @@ Réponse attendue (200) :
 }
 ```
 
-*Ambiance d'un lieu*
+**Ambiance d'un lieu**
 
 `GET /measurements/:location/:ambiance`
 
@@ -274,7 +288,7 @@ Réponse attendue (200) :
 }
 ```
 
-*Achallandage d'un lieu*
+**Achallandage d'un lieu**
 
 `GET /measurements/ambiance/:location/crowdedness`
 
