@@ -26,11 +26,7 @@ Via HTTP: `git clone https://github.com/luxuo/IFT3225-Infrastructure-de-collecte
 
 ### 3. Configurer les variables d'environnement
 
-Copier le fichier d'exemple et remplir les valeurs :
-
-`cp .env.example .env`
-
-Ouvrir .env et remplir :
+Créer le fichier .env et remplir :
 
 ```
 MONGO_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?appName=<AppName>
@@ -48,37 +44,45 @@ Le serveur écoute sur http://localhost:8383
 <img width="776" height="531" alt="image" src="https://github.com/user-attachments/assets/2a8bba3d-51c1-4bbd-8575-1b07f33948a9" />
 <img width="637" height="666" alt="image" src="https://github.com/user-attachments/assets/09577d3c-a036-491a-a4e0-315e806b5c05" />
 
-## How to run bridge script
+### Lancer les scripts alternatifs
 
-Le bridge est le script qui connecte le téléphone (Phyphox) au serveur.
+#### bridge.js
 
-Lancer le script avec "npm start"
-
-### Lancer le bridge
+Ceci est le script connectant les données de phyphox du téléphone à l'application. 
 
 ```
 npm run bridge
 ```
 
-Une série de questions sera posée. Veuillez répondre selon l'information collectée et votre besoin. 
-Veuillez avoir en main votre authToken.
+Une série de questions seront posé. Veuillez répondre selon l'information collectée et votre besoin. *Assurez-vous d'avoir un compte. Il va falloir se login en premier*. Le script peut se collecter les données phyphox automatiquement ou manuellement. L'utilisateur sera demandé de quel option il désire.
 
-### Mode automatique (Phyphox)
+##### Mode automatique (Phyphox)
 
 - Ouvrir Phyphox sur le téléphone
-- Lancer "Niveau sonore"
 - Activer l'accès à distance sur Phyphox
-- Entrer l'adresse IP affichée par Phyphox quand le script la demande
-- Le bridge enregistre automatiquement pendant quelques secondes, puis envoie les données
+- Entrer l'adresse IP affichée par Phyphox quand le script le demande
+- Le bridge enregistre pendant quelques secondes et envoie les données automatiquement
 
-### Mode manuel
+##### Mode manuel
 
-Si le téléphone est indisponible ou le réseau non partagé, choisir "manuel".
-Le script demande les valeurs audio directement et envoie la mesure sans Phyphox.
+Si le téléphone est indisponible ou le réseau non partagé, répondez `o` quand le script vous demande si vous voulez une insertion manuelle.
+Le script demande le PATH du fichier et envoie la mesure sans Phyphox.
+
+### seed.js
+
+Ceci est le script qui popule la base de données.
+
+```
+npm run seed
+```
+
+Une fois exécuté, si aucun message d'ajout de données n'a été fait, ceci est car les données sont déjà dans la base de données.
 
 ## Tests avec Postman
 
-### Étape 1 — Créer un appareil et récupérer un token
+### Enpoints de device.js
+
+*Création de device*
 
 ```
 POST http://localhost:8383/devices
@@ -100,9 +104,79 @@ Réponse attendue (201) :
 }
 ```
 
-Copier la valeur de authToken pour les étapes suivantes.
+*Pour récupérer le token, comme un login*
 
-### Étape 2 — Envoyer une mesure (route protégée)
+```
+POST http://localhost:8383/devices/token
+Content-Type: application/json
+
+{
+  "username": "monAppareil",
+  "password": "motdepasse123"
+}
+```
+
+Réponse attendue (200):
+
+```
+{
+  "device": { "_id": "...", "username": "monAppareil", "location": "biblio" },
+  "authToken": "eyJ..."
+}
+```
+
+*Pour voir tous les devices*
+
+`GET http://localhost:8383/devices`
+
+Réponse attendue (200):
+
+```
+[
+  {device},
+  ...
+]
+```
+
+*Pour changer de location ou de mot de passe:*
+
+```
+PATCH http://localhost:8383/devices
+Content-Type: application/json
+
+{
+  "username": "monAppareil",
+  "password": "motdepasse123",
+  update:{location:"cinema", password:"charlie"}
+}
+```
+
+Réponse attendue (200):
+
+```
+{
+  "_id": "...", "username": "monAppareil", "location": "cinema" 
+}
+```
+
+*Pour supprimer un device*
+
+```
+DELETE http://localhost:8383/devices
+Content-Type: application/json
+
+{
+  "username": "monAppareil",
+  "password": "charlie"
+}
+```
+
+Réponse attendue (204):
+
+` `
+
+
+### Envoyer une mesure (route protégée par token)
 
 ```
 POST http://localhost:8383/measurements
@@ -126,16 +200,107 @@ Réponse attendue (201) :
 
 ```{ "measurement": { ... } }```
 
-### Étape 3 — Tester les endpoints sémantiques (aucun token requis)
+### Enpoints fonctionnels des mesures (aucun token requis)
 
+`GET /measurements/ambiance/:location` -> 200: `[ {device1}, ... ]`
+
+
+### Endpoints sémantiques (aucun token requis)
+
+*Heures de pointe*
 
 `GET /measurements/ambiance/:location/busy-hours`
 
-`GET /measurements/ambiance/:location/recommendation?type=etude&jour={jour de la semaine}`
+Réponse attendue (200) :
 
-`GET /measurements/ambiance/:location/:ambiance`
+```
+{
+  "location": "cafe",
+  "busyHours": [
+    {
+      "period": "12:00-13:00",
+      "averageAudio": 77,
+      "noiseLevel": "modéré"
+    },
+    {
+      "period": "08:00-09:00",
+      "averageAudio": 73,
+      "noiseLevel": "modéré"
+    }
+  ],
+  "summary": "Les périodes les plus bruyantes sont généralement entre 12:00-13:00 et 08:00-09:00."
+}
+```
 
-### Étape 4 — Tester les erreurs d'authentification
+*Recommandation d'étude pour un lieu à un tel jour de la semaine*
+
+`GET /measurements/ambiance/:location/recommendation?type=etude&jour=lundi`
+
+Réponse attendue (200) :
+
+```
+{
+  "dayOfTheWeek": "lundi",
+  "bestTimeForStudy": {
+    "period": "18-19",
+    "avgNoise": 48
+  }
+}
+```
+
+*Ambiance d'un lieu*
+
+`GET /measurements/:location/:ambiance`
+
+Réponse attendue (200) :
+
+```
+{
+  "ambiance": "calme",
+  "timeFrames": [
+    {
+      "day": "Lundi",
+      "period": "14:00-16:00"
+    },
+    {
+      "day": "Mercredi",
+      "period": "17:00-19:00"
+    },
+    {
+      "day": "Lundi",
+      "period": "18:00-20:00"
+    }
+  ]
+}
+```
+
+*Achallandage d'un lieu*
+
+`GET /measurements/ambiance/:location/crowdedness`
+
+Réponse attendue (200) :
+
+```
+{
+  "location": "cafe",
+  "period": "par heure",
+  "crowdedness": [
+    {
+      "period": "12:00-13:00",
+      "averagePeople": 24,
+      "crowdedness": "eleve"
+    },
+    {
+      "period": "08:00-09:00",
+      "averagePeople": 18,
+      "crowdedness": "eleve"
+    }
+  ],
+  "summary": "Les périodes les plus occupées sont généralement entre 12:00-13:00 et 08:00-09:00."
+}
+```
+
+### Réponses d'erreurs d'authentification
 
 ```
 401 Probleme de token non existant:
@@ -149,6 +314,10 @@ POST http://localhost:8383/measurements
 Authorization: Bearer tokeninvalide
 ```
 
+Le code 403 est un code d'erreur qui a vérifié l'identité d'un individu, mais l'individu n'est pas authorisé à accéder la . Voir le 2e paragraphe de [https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401]
+
+
+
 ## .env.example
 
 ```
@@ -156,3 +325,5 @@ MONGO_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?appName=<AppNam
 PORT=8383
 PHRASE_PASS=<votre-phrase-secrete-jwt>
 ```
+
+Afin de préserver la sécurité des mots de passes, un fichier .env complet et fonctionnel se trouve dans le fichier .zip du projet soumis dans studium.
