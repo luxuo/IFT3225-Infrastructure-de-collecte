@@ -198,11 +198,12 @@ router.get("/measurements/:location/crowdedness", async (req, res) => {
 router.get("/measurements/:location/recommendation", async (req, res) => {
     try {
         const location = req.params.location.trim().toLowerCase();
+        if (req.query.type != "etude" && req.query.type != "study"){
+            return res.status(400).send({error: "Type de requête pas supportée. Veuillez utiliser ?type=etude&jour={votre jour de choix}"});
+        }
         const journee = req.query.jour.trim().toLowerCase();
 
-        if (req.query.type.toLowerCase() != "etude" && req.query.type.toLowerCase() != "study"){
-            return res.status(400).send({error: "type de requête pas supportée. Types supportés: type=etude ou type=study]"});
-        }
+        
 
 
         const joursSemaine = {
