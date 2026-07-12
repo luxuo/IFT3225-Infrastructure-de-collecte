@@ -12,13 +12,26 @@ const exampleLocations = [
 function MainPage() {
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Remplacer avec fetch
-    setTimeout(() => {
-      setLocations(exampleLocations);
-      setLoading(false);
-    }, 500);
+    fetch('http://localhost:8383/devices')
+      .then((response) => {
+        if(!response.ok){
+          throw new Error("Erreur pendant la récupération des données")
+        }
+      return response.json();
+      })
+      .then((data) => {
+        setLocations(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError(err.message);
+        setLoading(false);
+      });
+
   }, []);
 
   // Assigner couleur au badge
@@ -42,6 +55,16 @@ function MainPage() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="container my-5 text-center">
+        <div className="alert alert-danger" role="alert">
+          <strong>Erreur :</strong> Connection à l'API échoué ({error}). 
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container my-5">
       <header className="text-center mb-5">
@@ -51,15 +74,16 @@ function MainPage() {
 
       <div className="row g-4">
         {locations.map((lieu) => (
-          <div key={lieu.id} className="col-12 col-md-6">
+          <div key={lieu._id} className="col-12 col-md-6">
             <div className="card h-100 shadow-sm">
               <div className="card-body d-flex flex-column align-items-start">
-                <h2 className="card-title h5 mb-3">{lieu.name}</h2>
+                <h2 className="card-title h5 mb-3">{lieu.location}</h2>
                 
+                {/*
                 <span className={`badge ${getBadgeClass(lieu.class)} text-uppercase mb-3`}>
                   {lieu.class}
                 </span>
-                
+                */}
               </div>
             </div>
           </div>
