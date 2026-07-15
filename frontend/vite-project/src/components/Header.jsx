@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 export default function(){
     return (
         <header className="text-center mb-5">

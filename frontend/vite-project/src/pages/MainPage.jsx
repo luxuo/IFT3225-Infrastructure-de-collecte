@@ -1,9 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import ListeLieux from '../components/ListeLieux.jsx';
-import Header from '../components/Header.jsx';
+import LocationList from '../components/LocationList.jsx';
 import { useLocations } from '../hooks/useLocations.js';
-
 
 function MainPage() {
   const { locations, loading, error } = useLocations();
@@ -31,8 +29,7 @@ function MainPage() {
 
   return (
     <div className="container my-5">
-      <Header/>
-      <ListeLieux locations={locations}></ListeLieux>
+      <LocationList locations={locations}></LocationList>
     </div>
   );
 }

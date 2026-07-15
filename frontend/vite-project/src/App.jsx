@@ -1,10 +1,26 @@
 import React from 'react';
-import MainPage from './pages/MainPage'; 
+import MainPage from './pages/MainPage';
+import Location from './pages/Location'
+import Header from './components/Header.jsx';
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+} from "react-router-dom";
+
 function App() {
   return (
-    <div className="App">
-      <MainPage />
-    </div>
+    <Router>
+      <Header />
+      <Routes>
+        <Route path="/">
+          <Route index element={<MainPage />} />
+          <Route path="measurements">
+            <Route path=":location" element={<Location/>}></Route>
+          </Route>
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 
