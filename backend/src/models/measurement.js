@@ -68,12 +68,13 @@ const measurementSchema = new mongoose.Schema({
             message:'{VALUE} n\'est pas valide. Doit être [transport, restauration, commerce, regroupement, industriel, communautaire, institutionnel, personnel]'
         }
     },
-    location:{
+    locationId:{
+        type:Number,
+        required: true
+    },
+    author:{
         type:String,
-        required: true,
-        trim:true,
-        lowercase:true,
-        match: /^[a-z]{4,20}$/
+        required:true
     }
 }, {
     strict: "throw"

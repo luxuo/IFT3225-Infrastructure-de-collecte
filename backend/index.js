@@ -1,6 +1,7 @@
 require("dotenv").config();
 const measurements = require("./src/routes/measurements");
 const device = require("./src/routes/device");
+const locations = require("./src/routes/location");
 const express = require("express");
 const { connectDB } = require("./src/services/mongoose");
 const cors = require('cors');
@@ -16,6 +17,7 @@ const port = process.env.PORT || 8383;
 app.use(express.json());
 app.use(measurements);
 app.use(device);
+app.use(locations);
 
 app.use((req, res) => {
     return res.status(404).json({

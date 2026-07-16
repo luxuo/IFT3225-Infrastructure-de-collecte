@@ -1,5 +1,6 @@
 const express = require("express");
 const Measurement = require("../models/measurement");
+const Location = require("../models/location");
 const authentification = require("../middleware/authentification")
 const router = new express.Router();
 
@@ -7,6 +8,8 @@ const router = new express.Router();
 router.post("/measurements", authentification, async (req, res) => {
     const measurement = new Measurement(req.body);
     try {
+        const location = await Location.exists(req.body.locationId);
+        console.log(location)
         await measurement.save();
         res.status(201).send({ measurement });
         console.log("Création de la mesure effectuée avec succès !");
@@ -16,28 +19,28 @@ router.post("/measurements", authentification, async (req, res) => {
 });
 
 // ENDPOINTS DE RESSOURCE
-router.get("/measurements/:location", async (req,res) => {
-    const location = req.params.location.trim().toLowerCase();
-    const measurements = await Measurement.find({ location });
+router.get("/measurements/:locationId", async (req,res) => {
+    const locationId = req.params.locationId.trim().toLowerCase();
+    const measurements = await Measurement.find({ locationId });
 
     if (!measurements || measurements.length === 0) { // pas de mesures
         return res.status(404).json({
-            error: `Aucune mesure trouvée pour l'emplacement : '${location}'`
+            error: `Aucune mesure trouvée pour l'emplacement : '${locationId}'`
         });
     }
-    res.send({location,measurements});
+    res.send({locationId,measurements});
 });
 
 // ENDPOINTS SÉMANTIQUE
 
 // Get les heures d'achallandage
-router.get("/measurements/:location/busy-hours", async (req, res) => {
-    const location = req.params.location.trim().toLowerCase();
-    const measurement = await Measurement.find({ location });
+router.get("/measurements/:locationId/busy-hours", async (req, res) => {
+    const locationId = req.params.locationId.trim().toLowerCase();
+    const measurement = await Measurement.find({ locationId });
 
     if (!measurement || measurement.length === 0) { // pas de mesures
         return res.status(404).json({
-            error: `Aucune mesure trouvée pour l'emplacement : '${location}'`
+            error: `Aucune mesure trouvée pour l'emplacement : '${locationId}'`
         });
     }
 
@@ -94,7 +97,7 @@ router.get("/measurements/:location/busy-hours", async (req, res) => {
 
 
     return res.status(200).json({
-        location,
+        locationId,
         busyHours,
         summary
     });
@@ -102,15 +105,15 @@ router.get("/measurements/:location/busy-hours", async (req, res) => {
 });
 
 // get le niveau de densité de population selon l'heure
-router.get("/measurements/:location/crowdedness", async (req, res) => {
+router.get("/measurements/:locationId/crowdedness", async (req, res) => {
     try {
-        const location = req.params.location.trim().toLowerCase();
+        const locationId = req.params.locationId.trim().toLowerCase();
 
-        const measurements = await Measurement.find({ location });
+        const measurements = await Measurement.find({ locationId });
 
         if (!measurements || measurements.length === 0) {
             return res.status(404).json({
-                error: `Aucune mesure trouvée pour l'emplacement : '${location}'`
+                error: `Aucune mesure trouvée pour l'emplacement : '${locationId}'`
             });
         }
 
@@ -168,7 +171,7 @@ router.get("/measurements/:location/crowdedness", async (req, res) => {
 
         if (crowdedHours.length === 0) {
             return res.status(200).json({
-                location,
+                locationId,
                 period: "par heure",
                 crowdedness: [],
                 summary: "Pas assez de données sur l'achalandage pour identifier les périodes les plus occupées."
@@ -178,7 +181,7 @@ router.get("/measurements/:location/crowdedness", async (req, res) => {
         const topPeriods = crowdedHours.map(p => p.period);
 
         return res.status(200).json({
-            location,
+            locationId,
             period: "par heure",
             crowdedness: crowdedHours,
             summary: `Les périodes les plus occupées sont généralement entre ${topPeriods.join(" et ")}.`
@@ -194,10 +197,10 @@ router.get("/measurements/:location/crowdedness", async (req, res) => {
 });
 
 // Get l'heure de recommandation pour l'étude pour la journée
-// /measurements/:location/recommendation?type=study&jour=lundi
-router.get("/measurements/:location/recommendation", async (req, res) => {
+// /measurements/:locationId/recommendation?type=study&jour=lundi
+router.get("/measurements/:locationId/recommendation", async (req, res) => {
     try {
-        const location = req.params.location.trim().toLowerCase();
+        const locationId = req.params.locationId.trim().toLowerCase();
         if (req.query.type != "etude" && req.query.type != "study"){
             return res.status(400).send({error: "Type de requête pas supportée. Veuillez utiliser ?type=etude&jour={votre jour de choix}"});
         }
@@ -223,11 +226,11 @@ router.get("/measurements/:location/recommendation", async (req, res) => {
         const jourChoisi = joursSemaine[journee];
 
 
-        const measurements = await Measurement.find({ location });
+        const measurements = await Measurement.find({ locationId });
 
         if (!measurements || measurements.length === 0) {
             return res.status(404).json({
-                error: `Aucune donnée trouvée pour l'emplacement : '${location}'`
+                error: `Aucune donnée trouvée pour l'emplacement : '${locationId}'`
             });
         }
 
@@ -239,7 +242,7 @@ router.get("/measurements/:location/recommendation", async (req, res) => {
 
         if (dayMeasurements.length === 0) {
             return res.status(404).json({
-                error: `Aucune donnée trouvée pour '${location}' le '${journee}'`
+                error: `Aucune donnée trouvée pour '${locationId}' le '${journee}'`
             });
         }
 
@@ -290,9 +293,9 @@ router.get("/measurements/:location/recommendation", async (req, res) => {
     }
 });
 
-router.get("/measurements/:location/:ambiance", async (req, res) => {
+router.get("/measurements/:locationId/:ambiance", async (req, res) => {
     try {
-        const location = req.params.location.trim().toLowerCase();
+        const locationId = req.params.locationId.trim().toLowerCase();
         const targetAmbiance = req.params.ambiance.trim().toLowerCase();
 
         const allowedAmbiances = ['calme', 'bruyant', 'social', 'excitant'];
@@ -303,13 +306,13 @@ router.get("/measurements/:location/:ambiance", async (req, res) => {
         }
 
         const measurements = await Measurement.find({
-            location: location,
+            locationId: locationId,
             ambiance: targetAmbiance
         });
 
         if (!measurements || measurements.length === 0) {
             return res.status(404).json({
-                error: `Aucune donnée d'ambiance '${targetAmbiance}' trouvée pour '${location}'`
+                error: `Aucune donnée d'ambiance '${targetAmbiance}' trouvée pour '${locationId}'`
             });
         }
 
