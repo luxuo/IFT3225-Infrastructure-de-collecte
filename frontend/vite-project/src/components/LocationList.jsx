@@ -18,9 +18,9 @@ export default function({locations}){
         {locations.map((lieu) => (
           <div key={lieu._id} className="col-12 col-md-6">
             <div className="card h-100 shadow-sm">
-              <Link to={"/measurements/" + lieu.location}>
+              <Link to={"/measurements/" + lieu.id}>
                 <div className="card-body d-flex flex-column align-items-start">
-                  <h2 className={"card-title h5 mb-3 " + getBadgeClass(lieu.class)}>{lieu.location}</h2>
+                  <h2 className={"card-title h5 mb-3 " + getBadgeClass(lieu.class)}>{lieu.name}</h2>
                 </div>
               </Link>
             </div>

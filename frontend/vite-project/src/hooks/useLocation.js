@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchLocation } from "../api/location.js";
 
-export function useLocation(place) {
+export function useLocation(id) {
   const [location, setLocation] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -9,7 +9,7 @@ export function useLocation(place) {
   useEffect(() => {
     setLoading(true);
 
-    fetchLocation(place)
+    fetchLocation(id)
       .then((data) => {
         setLocation(data);
         setError(null);

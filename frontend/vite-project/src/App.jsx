@@ -17,7 +17,7 @@ function App() {
         <Route path="/">
           <Route index element={<MainPage />} />
           <Route path="measurements">
-            <Route path=":location" element={<Location/>}></Route>
+            <Route path=":locationId" element={<Location/>}></Route>
           </Route>
           <Route path="login" element={<Login />}></Route>
         </Route>

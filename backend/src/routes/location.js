@@ -25,6 +25,16 @@ router.get("/locations", async (req,res) =>{
     }
 });
 
+// GET LOCAIONS
+router.get("/locations/:id", async (req,res) =>{
+    try{
+        const locations = await Location.find(req.params);
+        res.send(locations);
+    }catch (err){
+        res.status(500).send(err);
+    }
+});
+
 // UPDATE
 router.patch("/locations", authentification, async (req,res) => {
     const allowedUpdates = ["lon", "lat"];
