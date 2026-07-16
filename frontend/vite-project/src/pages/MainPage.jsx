@@ -2,28 +2,21 @@
 import React, { useState, useEffect } from 'react';
 import LocationList from '../components/LocationList.jsx';
 import { useLocations } from '../hooks/useLocations.js';
+import Loading from '../components/loading/Loading.jsx';
+import LoadError from '../components/loading/LoadError.jsx';
 
 function MainPage() {
   const { locations, loading, error } = useLocations();
 
   if (loading) {
     return (
-      <div className="text-center mt-5">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Chargement...</span>
-        </div>
-        <p className="mt-2 text-muted">Chargement des lieux d'ambiance...</p>
-      </div>
+      <Loading loadMessage={"Chargement des lieux..."}></Loading>
     );
   }
 
   if (error) {
     return (
-      <div className="container my-5 text-center">
-        <div className="alert alert-danger" role="alert">
-          <strong>Erreur :</strong> Connection à l'API échoué ({error}). 
-        </div>
-      </div>
+      <LoadError errorMessage={`Connection à l'API échoué (${error}).`}></LoadError>
     );
   }
 
