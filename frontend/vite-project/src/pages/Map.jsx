@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
-import places from "../data/Locations";
-// import useApi from "../../../../src/interface/hooks/useApi.js";
+import { useLocations } from "../hooks/useLocations";
+import { fetchLocation } from "../api/location";
 
 import L from "leaflet";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
@@ -11,15 +12,22 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
-    iconRetinaUrl: markerIcon,
-    iconUrl: markerIcon,
-    shadowUrl: markerShadow
+  iconRetinaUrl: markerIcon,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow
 });
 
 export default function Map() {
+  const { locations, loading, error } = useLocations();
+
+  if (!locations || locations.length === 0) {
+    return <p>Aucun location disponible</p>;
+  }
+
   return (
     <main>
       <h1>Carte des lieux</h1>
+
       <p>
         Cliquez sur un icon pour consulter le portrait d’ambiance du lieu.
       </p>
@@ -30,23 +38,85 @@ export default function Map() {
         style={{ height: "650px", width: "100%" }}
       >
         <TileLayer
+          attribution="&copy; OpenStreetMap contributors"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {places.map((place, index) => (
-          <Marker 
-            key={index}
-            position={[place.lat, place.lng]}
-          >
-            <Popup>
-              <p>Ambiance: {place.ambiance}</p>
-              <p>Niveau de bruit moyen: {place.noiseLevel}</p>
-              <p>Niveau sonore en db: {place.noisedb}</p>
-            </Popup>
-          </Marker>
+        {locations.map((place) => (
+          <LocationMarker key={place._id} place={place} />
         ))}
-
       </MapContainer>
     </main>
+  );
+}
+
+function LocationMarker({ place }) {
+  const [measurements, setMeasurements] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  async function loadAmbiance() {
+    if (measurements || loading) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const result = await fetchLocation(place.id);
+      setMeasurements(result.measurements);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const latestMeasurement =
+    measurements && measurements.length > 0
+      ? [...measurements].sort(
+          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+        )[0]
+      : null;
+
+  return (
+    <Marker
+      position={[Number(place.lat), Number(place.lon)]}
+      eventHandlers={{
+        click: loadAmbiance
+      }}
+    >
+      <Popup>
+        <strong>{place.name}</strong>
+
+        {loading && <p>Chargement de l’ambiance...</p>}
+
+        {error && (
+          <p>
+            Probleme de données. Veuillez réessayer plus tard
+          </p>
+        )}
+
+        {!loading && !error && latestMeasurement && (
+          <>
+            <p>Ambiance : {latestMeasurement.ambiance}</p>
+
+            <p>
+              Personnes autour : {latestMeasurement.surrounding_people}
+            </p>
+
+            <p>
+              Dernière mesure :{" "}
+              {new Date(latestMeasurement.timestamp).toLocaleString()}
+            </p>
+          </>
+        )}
+
+        {!loading && !error && measurements?.length === 0 && (
+          <p>Aucune mesure disponible pour ce lieu</p>
+        )}
+      </Popup>
+    </Marker>
   );
 }
