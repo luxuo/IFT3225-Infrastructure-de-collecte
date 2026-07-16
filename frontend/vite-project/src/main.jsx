@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.jsx'
 import { UserProvider } from './context/user'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'leaflet/dist/leaflet.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
