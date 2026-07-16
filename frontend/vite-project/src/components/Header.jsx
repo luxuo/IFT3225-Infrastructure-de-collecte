@@ -1,10 +1,18 @@
 import React from 'react';
+import { Link } from "react-router";
 
-export default function(){
+
+
+export default function () {
     return (
-        <header className="text-center mb-5">
-            <h1 className="fw-bold">Ambiances de lieux</h1>
-            <p className="text-muted">Projet - IFT3225</p>
-        </header>
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+            <div className="container-fluid">
+                <Link to="/"><div className="--bs-primary-text-emphasis navbar-brand" href="#">Infrastructure de Collecte</div></Link>
+                <div>
+                    <Link to="/login"><button className="btn btn-outline-primary me-2" type="button">Se Connecter</button></Link>
+                    <Link to="/signup"><button className="btn btn-outline-dark me-2" type="button">Créer un Compte</button></Link>
+                </div>
+            </div>
+        </nav>
     );
 }
