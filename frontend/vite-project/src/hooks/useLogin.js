@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
 import { fetchToken } from "../api/login.js";
 
-export function useLogin(place) {
-  const [location, setLocation] = useState([]);
+export default function useLogin(req) {
+  const [login, setLogin] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     setLoading(true);
 
-    fetchLocation(place)
+    fetchToken(req)
       .then((data) => {
-        setLocation(data);
+        setLogin(data);
         setError(null);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
 
-  return { location, loading, error };
+  return { login, loading, error };
 }
