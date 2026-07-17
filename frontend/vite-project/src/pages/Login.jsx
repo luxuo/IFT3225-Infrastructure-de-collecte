@@ -16,7 +16,7 @@ export default function(){
     return (
         <div>
             <AccountForm statement={'Se Connecter'} handleClick={handleClick} setUsername={setUsername} setPassword={setPassword}/>
-            {error? <LoadError errorMessage={error}/>:<></>}
+            {error? <LoadError errorMessage={error}/>:<div></div>}
         </div>
     );
 }

@@ -6,7 +6,7 @@ export default function useLogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const {user, setUser} = useContext(UserContext);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleClick = (event) => {
