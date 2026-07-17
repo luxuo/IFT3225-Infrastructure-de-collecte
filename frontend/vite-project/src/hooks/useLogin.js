@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { fetchToken } from "../api/login.js";
 import { UserContext } from "../context/user.jsx";
 
-export default function useLogin() {
+export default function useLogin(signup) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const {user, setUser} = useContext(UserContext);
@@ -12,8 +12,9 @@ export default function useLogin() {
   const handleClick = (event) => {
     event.preventDefault();
     setLoading(true);
-
-    fetchToken({username, password})
+    const location = 'diddy'
+    const req = signup? {username, password, location}: {username, password}
+    fetchToken(req)
       .then((data) => {
         setUser(data);
         setError(null);

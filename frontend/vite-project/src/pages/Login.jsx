@@ -5,7 +5,7 @@ import LoadError from '../components/loading/LoadError';
 import Loading from '../components/loading/Loading';
 
 export default function(){
-    const { setUsername, setPassword, handleClick, loading, error } = useLogin();
+    const { setUsername, setPassword, handleClick, loading, error } = useLogin(false);
 
     if (loading){
         return (
@@ -16,7 +16,7 @@ export default function(){
     return (
         <div>
             <AccountForm statement={'Se Connecter'} handleClick={handleClick} setUsername={setUsername} setPassword={setPassword}/>
-            {error? <LoadError errorMessage={error}/>:<div></div>}
+            {error? <LoadError errorMessage={'Nom d\'utilisateur ou mot de passe incorrect'}/>:<div></div>}
         </div>
     );
 }

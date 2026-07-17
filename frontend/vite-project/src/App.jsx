@@ -3,6 +3,7 @@ import MainPage from './pages/MainPage';
 import Location from './pages/Location'
 import Header from './components/Header.jsx';
 import Login from './pages/Login'
+import Signup from './pages/Signup.jsx';
 import Map from './pages/Map'
 import {
     BrowserRouter as Router,
@@ -21,6 +22,7 @@ function App() {
             <Route path=":locationId" element={<Location/>}></Route>
           </Route>
           <Route path="login" element={<Login />}></Route>
+          <Route path="signup" element={<Signup />}></Route>
           <Route path="map" element={<Map />}></Route>
         </Route>
       </Routes>

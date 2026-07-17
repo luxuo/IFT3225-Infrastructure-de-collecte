@@ -1,5 +1,6 @@
 export async function fetchToken(req) {
-  const result = await fetch("http://localhost:8383/devices/token", {
+  const endpoint = req.location?'/devices':'/devices/token'
+  const result = await fetch(`http://localhost:8383${endpoint}`, {
         method: "POST",
         body: JSON.stringify(req),
         headers: {
