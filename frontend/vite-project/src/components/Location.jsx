@@ -34,7 +34,7 @@ export default function({ location_measurements }) {
         .slice()
         .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
         .map((measurement, index) => ({
-            x: `M${index + 1}`,
+            x: new Date(measurement.timestamp).toLocaleString(),
             y: ambianceToValue(measurement.ambiance),
         }));
 
