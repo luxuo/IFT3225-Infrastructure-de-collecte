@@ -23,5 +23,5 @@ export default function useLogin(signup) {
       .finally(() => setLoading(false));
   };
 
-  return { setUsername, setPassword, handleClick, loading, error };
+  return { setUsername, setPassword, handleClick, loading, error, user };
 }

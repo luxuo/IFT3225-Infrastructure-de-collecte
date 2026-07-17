@@ -3,9 +3,10 @@ import AccountForm from '../components/AccountForm'
 import useLogin from '../hooks/useLogin';
 import LoadError from '../components/loading/LoadError';
 import Loading from '../components/loading/Loading';
+import { Navigate } from 'react-router-dom';
 
 export default function(){
-    const { setUsername, setPassword, handleClick, loading, error } = useLogin(false);
+    const { setUsername, setPassword, handleClick, loading, error, user } = useLogin(false);
 
     if (loading){
         return (
@@ -15,7 +16,9 @@ export default function(){
 
     return (
         <div>
-            <AccountForm statement={'Se Connecter'} handleClick={handleClick} setUsername={setUsername} setPassword={setPassword}/>
+            {user? <Navigate to='/'/> :
+            <AccountForm statement={'Se Connecter'} handleClick={handleClick} setUsername={setUsername} setPassword={setPassword}/>}
+            
             {error? <LoadError errorMessage={'Nom d\'utilisateur ou mot de passe incorrect'}/>:<div></div>}
         </div>
     );
