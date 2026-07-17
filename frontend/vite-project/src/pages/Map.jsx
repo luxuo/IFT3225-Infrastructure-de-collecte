@@ -20,10 +20,6 @@ L.Icon.Default.mergeOptions({
 export default function Map() {
   const { locations, loading, error } = useLocations();
 
-  if (!locations || locations.length === 0) {
-    return <p>Aucun location disponible</p>;
-  }
-
   return (
     <main>
       <h1>Carte des lieux</h1>
@@ -31,7 +27,7 @@ export default function Map() {
       <p>
         Cliquez sur un icon pour consulter le portrait d’ambiance du lieu.
       </p>
-
+      
       <MapContainer
         center={[45.5045, -73.613]}
         zoom={13}
@@ -42,13 +38,17 @@ export default function Map() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
+        
         {locations.map((place) => (
           <LocationMarker key={place._id} place={place} />
         ))}
+       
       </MapContainer>
     </main>
+    
   );
 }
+
 
 function LocationMarker({ place }) {
   const [measurements, setMeasurements] = useState(null);
@@ -120,3 +120,4 @@ function LocationMarker({ place }) {
     </Marker>
   );
 }
+  
