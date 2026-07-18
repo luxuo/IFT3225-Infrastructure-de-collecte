@@ -42,10 +42,10 @@ async function promptAttributes(location) {
     data.source_distance = parseFloat(await prompt('À quelle distance est la source de bruit (en mètre)?:  '));
     data.weather = await prompt('Quelles sont les conditions météorologiques? [clair, nuageux, brume, precipitante]:  ');
     data.setting = await prompt('Dans quel type d\'environnement est l\'outil de mesure? [transport, restauration, commerce, regroupement, industriel, communautaire, institutionnel, personnel]:  ');
-    data.location = location;
+    data.locationId = location;
     const isAtPlace = await prompt(`Êtes-vous à ${location}? (o/n): `);
     if (isAtPlace.toLowerCase() != 'o')
-        data.location = await prompt('C\'est quoi le lieu? doit seulement contenir des lettres simples a-z et doit être entre 4 à 20 charactères de long:  ');
+        data.locationId = await prompt('C\'est quoi le lieu? doit seulement contenir des lettres simples a-z et doit être entre 4 à 20 charactères de long:  ');
     return data;
 }
 
