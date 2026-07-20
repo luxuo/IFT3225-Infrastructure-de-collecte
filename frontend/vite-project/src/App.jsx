@@ -6,6 +6,7 @@ import Login from './pages/Login'
 import Logout from './pages/Logout.jsx';
 import Signup from './pages/Signup.jsx';
 import Map from './pages/Map'
+import MeasurementCreation from './pages/MeasurementCreation.jsx';
 import {
     BrowserRouter as Router,
     Routes,
@@ -20,6 +21,7 @@ function App() {
         <Route path="/">
           <Route index element={<MainPage />} />
           <Route path="measurements">
+            <Route index element={<MeasurementCreation />} />
             <Route path=":locationId" element={<Location/>}></Route>
           </Route>
           <Route path="login" element={<Login />}></Route>

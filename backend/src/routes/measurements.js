@@ -1,8 +1,23 @@
 const express = require("express");
+const Device = require('../models/device');
 const Measurement = require("../models/measurement");
 const Location = require("../models/location");
 const authentification = require("../middleware/authentification")
 const router = new express.Router();
+
+
+// Prends les données collectées
+async function getData(ip){
+    const res = await fetch("http://"+ ip + ":8080/get?calibration=&dB=full&time=full");
+    const data = await res.json();
+    return data['buffer'];
+}
+
+// Fonction d'attente
+function sleep(ms){
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 
 // CREATE
 router.post("/measurements", authentification, async (req, res) => {
@@ -18,8 +33,43 @@ router.post("/measurements", authentification, async (req, res) => {
     }
 });
 
+// CREATE
+router.post("/phyphox/measurements", authentification, async (req, res) => {
+    try {
+        const ip = req.body.ip;
+        await fetch("http://"+ ip + ":8080/control?cmd=clear");
+        const res = await fetch("http://"+ ip + ":8080/control?cmd=start");
+        await sleep(10000);
+        const res = await fetch("http://"+ ip + ":8080/control?cmd=stop");
+        const data = await getData(ip);
+
+        delete req.body.ip
+        const measurementData = req.body
+        measurementData.noise_buffer = data.dB.buffer;
+        measurementData.time_buffer = data.time.buffer;
+
+        measurementData.timestamp = new Date();
+        measurementData.author = req.device.username;
+
+        const measurement = new Measurement(req.body);
+
+        try {
+            const location = await Location.exists({locationId:req.body.locationId});
+            await measurement.save();
+            res.status(201).send({ measurement });
+            console.log("Création de la mesure effectuée avec succès !");
+        } catch (e) {
+            console.log(e);
+            res.status(400).send(e);
+        }
+    } catch (e) {
+        console.error(e);
+        res.status(500).send(e);
+    }
+});
+
 // ENDPOINTS DE RESSOURCE
-router.get("/measurements/:locationId", async (req,res) => {
+router.get("/measurements/:locationId", async (req, res) => {
     const locationId = req.params.locationId.trim().toLowerCase();
     const measurements = await Measurement.find({ locationId });
 
@@ -28,7 +78,7 @@ router.get("/measurements/:locationId", async (req,res) => {
             error: `Aucune mesure trouvée pour l'emplacement : '${locationId}'`
         });
     }
-    res.send({locationId,measurements});
+    res.send({ locationId, measurements });
 });
 
 // ENDPOINTS SÉMANTIQUE
@@ -201,12 +251,12 @@ router.get("/measurements/:locationId/crowdedness", async (req, res) => {
 router.get("/measurements/:locationId/recommendation", async (req, res) => {
     try {
         const locationId = req.params.locationId.trim().toLowerCase();
-        if (req.query.type != "etude" && req.query.type != "study"){
-            return res.status(400).send({error: "Type de requête pas supportée. Veuillez utiliser ?type=etude&jour={votre jour de choix}"});
+        if (req.query.type != "etude" && req.query.type != "study") {
+            return res.status(400).send({ error: "Type de requête pas supportée. Veuillez utiliser ?type=etude&jour={votre jour de choix}" });
         }
         const journee = req.query.jour.trim().toLowerCase();
 
-        
+
 
 
         const joursSemaine = {

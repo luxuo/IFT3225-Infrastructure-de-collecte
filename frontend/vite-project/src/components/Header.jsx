@@ -11,7 +11,7 @@ export default function () {
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
-                <Link to="/"><div className="--bs-primary-text-emphasis navbar-brand" href="#">Infrastructure de Collecte</div></Link>
+                <Link to="/measurements"><div className="--bs-primary-text-emphasis navbar-brand" href="#">Infrastructure de Collecte</div></Link>
                 {user === undefined? <Guest/>: <User user={user}/>}
             </div>
         </nav>

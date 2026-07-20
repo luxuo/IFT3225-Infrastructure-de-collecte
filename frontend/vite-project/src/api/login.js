@@ -9,7 +9,7 @@ export async function fetchToken(req) {
     });
 
   if (!result.ok) {
-    throw new Error(`Impossible de charger les lignes (HTTP ${result.status}).`);
+    throw new Error(`Erreur lors ${req.location?' de la création de compte':'de la connexion'} (HTTP ${result.status}).`);
   }
 
   return result.json();
