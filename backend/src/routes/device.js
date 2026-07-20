@@ -77,5 +77,35 @@ router.delete("/devices", async (req, res) =>{
     }
 });
 
+// GET CURRENT USER
+router.get("/devices/me", authentification, async (req, res) => {
+    res.send(req.device);
+});
+
+// TOGGLE FAVORITE
+router.post("/devices/favorites/:locationId", authentification, async (req, res) => {
+    const locationId = Number(req.params.locationId);
+
+    if (Number.isNaN(locationId)) {
+        return res.status(400).send({ error: "locationId invalide" });
+    }
+
+    const device = req.device;
+    const favorites = device.favorites || [];
+    const exists = favorites.includes(locationId);
+
+    if (exists) {
+        device.favorites = favorites.filter((id) => id !== locationId);
+    } else {
+        device.favorites = [...favorites, locationId];
+    }
+
+    await device.save();
+
+    res.send({
+        favorites: device.favorites,
+        isFavorite: !exists
+    });
+});
 
 module.exports = router;

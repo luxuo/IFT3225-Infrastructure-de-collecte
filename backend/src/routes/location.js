@@ -25,7 +25,7 @@ router.get("/locations", async (req,res) =>{
     }
 });
 
-// GET LOCAIONS
+// GET LOCATIONS
 router.get("/locations/:id", async (req,res) =>{
     try{
         const locations = await Location.find(req.params);
