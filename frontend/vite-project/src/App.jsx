@@ -7,6 +7,7 @@ import Logout from './pages/Logout.jsx';
 import Signup from './pages/Signup.jsx';
 import Map from './pages/Map'
 import MeasurementCreation from './pages/MeasurementCreation.jsx';
+import User from './pages/User'
 import {
     BrowserRouter as Router,
     Routes,
@@ -28,6 +29,7 @@ function App() {
           <Route path="signup" element={<Signup />}></Route>
           <Route path="logout" element={<Logout />}></Route>
           <Route path="map" element={<Map />}></Route>
+          <Route path="users" element={<User/>}></Route>
         </Route>
       </Routes>
     </Router>

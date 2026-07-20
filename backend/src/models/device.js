@@ -25,7 +25,11 @@ const deviceSchema = new mongoose.Schema({
     authToken:{
         type:String,
         required: true
-    }
+    },
+    favorites: {
+    type: [Number], // liste de nombres correspondants aux id des lieux favoris
+    default: []
+},
 }, {
     strict: "throw"
 });
