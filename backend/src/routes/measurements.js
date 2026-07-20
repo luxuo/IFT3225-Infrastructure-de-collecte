@@ -38,9 +38,9 @@ router.post("/phyphox/measurements", authentification, async (req, res) => {
     try {
         const ip = req.body.ip;
         await fetch("http://"+ ip + ":8080/control?cmd=clear");
-        const res = await fetch("http://"+ ip + ":8080/control?cmd=start");
+        await fetch("http://"+ ip + ":8080/control?cmd=start");
         await sleep(10000);
-        const res = await fetch("http://"+ ip + ":8080/control?cmd=stop");
+        await fetch("http://"+ ip + ":8080/control?cmd=stop");
         const data = await getData(ip);
 
         delete req.body.ip
