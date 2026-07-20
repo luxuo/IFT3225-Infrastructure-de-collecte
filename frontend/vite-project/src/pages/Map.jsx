@@ -110,6 +110,13 @@ function LocationMarker({ place }) {
               Dernière mesure :{" "}
               {new Date(latestMeasurement.timestamp).toLocaleString()}
             </p>
+
+            <Link
+              to={`/measurements/${place.id}`}
+              style={{ display: "inline-block", padding: "8px 12px", background: "#007bff", color: "white", textDecoration: "none", borderRadius: "4px" }}
+            >
+              Portrait d’ambiance complet
+            </Link>
           </>
         )}
 
