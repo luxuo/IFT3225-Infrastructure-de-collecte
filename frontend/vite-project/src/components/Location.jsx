@@ -75,14 +75,25 @@ export default function({ location_measurements }) {
     });
     };
 
-    
-
     if (!location) {
         return <div className="container my-5">Chargement...</div>;
     }
 
 
+    // partie badge
+    const infoMeasurements = location_measurements?.measurements ?? [];
+    
+    const latestMeasurement =
+    infoMeasurements && infoMeasurements.length > 0
+      ? [...infoMeasurements].sort(
+          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+        )[0]
+      : null;
 
+    // partie des creneaux calmes
+    const calmSlots = infoMeasurements.filter(
+        (measurement) => measurement.ambiance.toLowerCase() === "calme"
+    );
     // partie du graph historique
     const measurements = location_measurements?.measurements ?? [];
     const chartData = measurements
@@ -96,7 +107,6 @@ export default function({ location_measurements }) {
 
     return (
         
-
         <div className="container my-5">
             <div className="d-flex align-items-center gap-2">
                 <h1 className="mb-0">{locationName}</h1>
@@ -114,6 +124,29 @@ export default function({ location_measurements }) {
                 </button>
             </div>
 
+            <span className="badge">
+                <p style={{ color: "black", fontSize: "30px" }}>Ambiance: {latestMeasurement?.ambiance}</p>
+            </span>
+
+            <div className="portrait">
+                <p> Personnes autour : {latestMeasurement?.surrounding_people}</p>
+                <p> Dernière mesure :{" "} {new Date(latestMeasurement?.timestamp).toLocaleString()}</p>
+            </div>
+
+            <div className="creneaux calmes">
+                {calmSlots.length === 0 ? (
+                <p>Aucun créneau calme disponible.</p>
+                ) : (
+                <ul>
+                <p>Créneaux calmes :</p>
+                {calmSlots.map((measurement) => (
+                <li key={measurement._id}>
+                {new Date(measurement.timestamp).toLocaleString()}
+                </li>
+                ))}
+                </ul>
+                )}
+            </div>
             {chartData.length === 0 ? (
             <div className="text-center mt-5">
                 <p>Aucune mesure disponible pour tracer le graphe.</p>
