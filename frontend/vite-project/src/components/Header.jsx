@@ -12,6 +12,7 @@ export default function () {
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
                 <Link to="/"><div className="--bs-primary-text-emphasis navbar-brand" href="#">Infrastructure de Collecte</div></Link>
+                <Link to="/map" className="btn btn-outline-primary me-2">Map</Link>
                 <Link to="/measurements" className="btn btn-outline-primary me-2">Soummettre une mesure</Link>
                 {user === undefined? <Guest/>: <User user={user}/>}
             </div>
