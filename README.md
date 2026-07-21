@@ -1,11 +1,8 @@
 # IFT3225-Infrastructure-de-collecte
 
-Serveur Express connecté à MongoDB Atlas qui collecte des données d'ambiance
-telles que niveau sonore ou météo avec l'aide de l'application Phyphox et les rend
-interrogeables via une API REST. Les données sont captées par une application téléphonique,
-acheminées par un bridge Node.js, et analysées par des
-endpoints sémantiques qui répondent à des questions concrètes sur l'ambiance et l'evironnement
-d'un lieu.
+Application React qui affiche et collecte des données d'ambiance. Utilise un serveur Express connecté à MongoDB Atlas. La page web affiche une map à l'aide de Leaflet où on peut voir les lieux. Quand on clique sur un lieu on peut voir son ambiance et d'autres informations. Les utilisateur peuvent s'authentifier,créer un compte, enregistrer des lieux favoris et soummettre des nouvelles mesures d'ambiance de lieu. Afin de faire un mesure on utilise un bridge Node.js qui est connecté à une application Phyphox sur un téléphone qui va effectuer la mesure.
+
+L'application est divisé en deux partie: backend et frontend. Il faut que le serveur express est actif dans le backend et l'application react est active dans le frontend.
 
 ## Prérequis
 
@@ -22,11 +19,14 @@ Via HTTP: `git clone https://github.com/luxuo/IFT3225-Infrastructure-de-collecte
 
 ### 2. Installer les dépendances
 
+`cd backend`
+`npm install`
+`cd frontend/vite-project`
 `npm install`
 
 ### 3. Configurer les variables d'environnement
 
-Créer le fichier .env et remplir :
+Créer le fichier backend/.env et remplir :
 
 ```
 MONGO_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?appName=<AppName>
@@ -34,15 +34,35 @@ PORT=8383
 PHRASE_PASS= <phrase_pass>
 ```
 
-### 4. Lancer le serveur
+### 4. Lancer le serveur Express
 
+`cd backend`
 `npm start`
 
-Le serveur écoute sur http://localhost:8383
 
-<img width="782" height="342" alt="image" src="https://github.com/user-attachments/assets/c98f18dd-cb34-48ab-9a61-d80d0ab4f07b" />
-<img width="776" height="531" alt="image" src="https://github.com/user-attachments/assets/2a8bba3d-51c1-4bbd-8575-1b07f33948a9" />
-<img width="637" height="666" alt="image" src="https://github.com/user-attachments/assets/09577d3c-a036-491a-a4e0-315e806b5c05" />
+### 5. Lancer l'application React
+
+Dans un autre terminal
+
+`cd frontend/vite-project`
+`npm run dev`
+
+### 6. Accéder au site web
+
+Dans un browser mettre http://localhost:5173
+
+## Utilisation du site web
+
+En ouvrant le site web, on arrive a la page principal qui affiche la liste des lieux. On peut cliquer sur un lieu et on arrive à la vue détaillé de ce lieu. On peut voir un graph d'historique de mesures et d'autres informations. Aussi, on a une étoile à coté du nom du lieu. Si on est connecté, on peut cliquer cette étoile, et le lieu va être ajouté au favoris de ce user. 
+
+L'entête a des boutons qui permette d'accéder différentes pages. Si on est authentifié le bouton "Se connecter" devient un accès à la page compte (le bouton affiche le nom d'utilisateur). En allant sur la page compte, on peut voir nos favoris.
+
+On peut cliquer sur le bouton soumettre une mesure qui va nous permettre de soumettre une mesure. Si on est pas authentifié ça va nous amener à la page de connexion. Pour faire un enregistrement il va falloir utiliser l'application phyphox sur notre téléphone.
+
+
+
+## Readme de la Phase 1
+
 
 ### Lancer les scripts alternatifs
 
@@ -55,6 +75,12 @@ npm run bridge
 ```
 
 Une série de questions seront posé. Veuillez répondre selon l'information collectée et votre besoin. *Assurez-vous d'avoir un compte. Il va falloir se login en premier*. Le script peut se collecter les données phyphox automatiquement ou manuellement. L'utilisateur sera demandé de quel option il désire.
+
+
+
+
+
+
 
 ##### Mode automatique (Phyphox)
 
