@@ -2,11 +2,15 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/user.jsx";
 import { fetchCurrentUser } from "../api/favorites.js";
 import { fetchLocations } from "../api/locations.js";
+import { fetchMeasurements } from "../api/measurements.js";
+import {fetchLocationInfo} from "../api/locationInfo.js";
 import { Link } from "react-router-dom";
 
 export default function UserPage() {
     const { user } = useContext(UserContext);
     const [favorites, setFavorites] = useState([]);
+    const [locationNames, setLocationNames] = useState({});
+    const [myMeasurements, setMyMeasurements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -20,12 +24,28 @@ export default function UserPage() {
 
                 const me = await fetchCurrentUser(user.authToken);
                 const locations = await fetchLocations();
+                const measurementsData = await fetchMeasurements(user.authToken);
 
                 const favoriteLocations = locations.filter((location) =>
                     (me.favorites ?? []).includes(location.id)
                 );
 
+                // To get the location names
+                const measurements = measurementsData.measurements ?? [];
+                const uniqueLocationIds = [...new Set(
+                    measurements.map((measurement) => measurement.locationId)
+                )];
+                const namesEntries = await Promise.all(
+                    uniqueLocationIds.map(async (id) => {
+                        const locationInfo = await fetchLocationInfo(id);
+                        return [id, locationInfo[0]?.name ?? `Lieu ${id}`];
+                    })
+                );
+                const namesMap = Object.fromEntries(namesEntries);
+
                 setFavorites(favoriteLocations);
+                setLocationNames(namesMap);
+                setMyMeasurements(measurementsData.measurements ?? []);
                 setError(null);
             } catch (err) {
                 setError(err.message);
@@ -60,6 +80,24 @@ export default function UserPage() {
                             className="list-group-item list-group-item-action"
                         >
                             {location.name}
+                        </Link>
+                    ))}
+                </div>
+            )}
+
+            <h2 className="mt-5">Mes mesures</h2>
+
+            {myMeasurements.length === 0 ? (
+                <p>Aucune mesure créée par cet utilisateur.</p>
+            ) : (
+                <div className="list-group">
+                    {myMeasurements.map((measurement) => (
+                        <Link
+                            key={measurement._id}
+                            to={`/measurements/${measurement.locationId}`}
+                            className="list-group-item list-group-item-action"
+                        >
+                            {locationNames[measurement.locationId] ?? `Lieu ${measurement.locationId}`} - {measurement.ambiance}
                         </Link>
                     ))}
                 </div>

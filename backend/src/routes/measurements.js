@@ -81,6 +81,16 @@ router.get("/measurements/:locationId", async (req, res) => {
     res.send({ locationId, measurements });
 });
 
+// Get les mesures de l'utilisateur connecté
+router.get("/user/measurements/me", authentification, async (req, res) => {
+    try {
+        const measurements = await Measurement.find({ author: req.device.username });
+        res.send({ measurements });
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
 // ENDPOINTS SÉMANTIQUE
 
 // Get les heures d'achallandage
