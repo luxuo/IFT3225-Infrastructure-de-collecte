@@ -4,10 +4,10 @@ const Measurement = require("../models/measurement");
 const Location = require("../models/location");
 const fs = require('fs');
 const { connectDB } = require("../../src/services/mongoose");
-connectDB().catch(err => console.log(err));
 
 
 async function seed() {
+    await connectDB().catch(err => console.log(err));
     // Seed des locations
     const locations = JSON.parse(fs.readFileSync(__dirname + "/location_seed.json"));
     for (element of locations) {
