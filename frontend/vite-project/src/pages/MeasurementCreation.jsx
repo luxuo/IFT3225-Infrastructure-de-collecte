@@ -7,7 +7,7 @@ import { useLocations } from '../hooks/useLocations';
 import { Navigate } from 'react-router-dom';
 
 export default function(){
-    const { user, loading, loadingMeasure, error, success, setSuccess, setSurroundingPeople, setAmbiance, setSourceDistance, setWeather, setSetting, setLocation, setIp, handleSubmit} = useMeasurementCreation();
+    const { user, locationId, loading, loadingMeasure, error, success, setSuccess, setSurroundingPeople, setAmbiance, setSourceDistance, setWeather, setSetting, setLocation, setIp, handleSubmit} = useMeasurementCreation();
     const ambianceOptions = [{value:'calme', item:'calme'},{value:'social', item:'social'},{value:'neutre', item:'neutre'},{value:'bruyant', item:'bruyant'},{value:'chaotique', item:'chaotique'}]
     const weatherOptions = [{value:'clair', item:'clair'},{value:'nuageux', item:'nuageux'},{value:'brume', item:'brume'},{value:'precipitante', item:'precipitante'}]
     const settingOptions = [{value:'transport', item:'transport'},{value:'restauration', item:'restauration'},{value:'commerce', item:'commerce'},{value:'regroupement', item:'regroupement'},{value:'industriel', item:'industriel'},{value:'communautaire', item:'communautaire'},{value:'institutionnel', item:'institutionnel'},{value:'personnel', item:'personnel'}]
@@ -23,7 +23,7 @@ export default function(){
     if(success){
         //setSuccess(false);
         return (
-            <Navigate to="/" />
+            <Navigate to={"/measurements/"+locationId} />
         )
     }
 

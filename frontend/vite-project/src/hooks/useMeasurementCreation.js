@@ -29,5 +29,5 @@ export default function useMeasurementCreation() {
   };
   
 
-  return { user, loading, loadingMeasure, error, success, setSuccess, setSurroundingPeople, setAmbiance, setSourceDistance, setWeather, setSetting, setLocation, setIp, handleSubmit};
+  return { user, locationId, loading, loadingMeasure, error, success, setSuccess, setSurroundingPeople, setAmbiance, setSourceDistance, setWeather, setSetting, setLocation, setIp, handleSubmit};
 }
