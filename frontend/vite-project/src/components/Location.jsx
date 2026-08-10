@@ -6,6 +6,7 @@ import { UserContext } from "../context/user.jsx";
 import { fetchCurrentUser, toggleFavorite } from "../api/favorites.js";
 import { fetchLocation } from "../api/location.js";
 import {fetchLocationInfo} from "../api/locationInfo.js";
+import { fetchComments, createComment } from "../api/comments.js";
 
 import {
     LineChart,
@@ -43,6 +44,7 @@ export default function({ location_measurements }) {
     const [location, setLocation] = useState(null);
     const [isFavorite, setIsFavorite] = useState(false);
     const [locationName, setLocationName] = useState("");
+    
 
     useEffect(() => {
         async function loadData() {
@@ -75,9 +77,7 @@ export default function({ location_measurements }) {
     });
     };
 
-    if (!location) {
-        return <div className="container my-5">Chargement...</div>;
-    }
+    
 
 
     // partie badge
@@ -104,6 +104,55 @@ export default function({ location_measurements }) {
             y: ambianceToValue(measurement.ambiance),
         }));
 
+    
+    // partie des commentaires
+    const [comments, setComments] = useState([]);
+    const [commentsError, setCommentsError] = useState("");
+    const [commentText, setCommentText] = useState("");
+    const [commentError, setCommentError] = useState("");
+    const [commentLoading, setCommentLoading] = useState(false);
+
+    useEffect(() => {
+    async function loadComments() {
+        try {
+        setCommentsError("");
+        const data = await fetchComments(locationId);
+        setComments(data.comments ?? []);
+        } catch (err) {
+        setCommentsError(err.message);
+        }
+    }
+    loadComments();
+    }, [locationId]);
+
+    const handleCommentSubmit = async (event) => {
+        event.preventDefault();
+
+        if (!user?.authToken) return;
+
+        const trimmed = commentText.trim();
+        if (!trimmed) {
+            setCommentError("Le commentaire ne peut pas être vide.");
+            return;
+        }
+
+        setCommentLoading(true);
+        setCommentError("");
+
+        try {
+            const data = await createComment(locationId, trimmed, user.authToken);
+            setComments((current) => [data.comment, ...current]);
+            setCommentText("");
+        } catch (err) {
+            setCommentError(err.message);
+        } finally {
+            setCommentLoading(false);
+        }
+        };
+
+    if (!location) {
+        return <div className="container my-5">Chargement...</div>;
+    }
 
     return (
         
@@ -171,6 +220,64 @@ export default function({ location_measurements }) {
             </ResponsiveContainer>
         </div>
         )}
+        
+        <div className="mt-5">
+  <h2 className="h4 mb-3">Commentaires sur l'ambiance</h2>
+
+  {commentsError ? (
+    <div className="alert alert-warning">{commentsError}</div>
+  ) : null}
+
+  {comments.length === 0 ? (
+    <p>Aucun commentaire pour le moment.</p>
+  ) : (
+    <div className="list-group">
+      {comments.map((comment) => (
+        <div key={comment._id} className="list-group-item">
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <strong>{comment.author}</strong>
+            <small className="text-muted">
+              {new Date(comment.createdAt).toLocaleString()}
+            </small>
+          </div>
+          <p className="mb-0" style={{ whiteSpace: "pre-wrap" }}>
+            {comment.content}
+          </p>
+        </div>
+      ))}
+    </div>
+  )}
+
+  {user?.authToken ? (
+    <form onSubmit={handleCommentSubmit} className="mt-4">
+      <div className="mb-3">
+        <label htmlFor="commentContent" className="form-label">
+          Ajouter un commentaire
+        </label>
+        <textarea
+          id="commentContent"
+          className="form-control"
+          rows="3"
+          value={commentText}
+          onChange={(event) => setCommentText(event.target.value)}
+          placeholder="Décris l'ambiance du lieu..."
+        />
+      </div>
+
+      {commentError ? (
+        <div className="alert alert-danger">{commentError}</div>
+      ) : null}
+
+      <button type="submit" className="btn btn-primary" disabled={commentLoading}>
+        {commentLoading ? "Publication..." : "Publier"}
+      </button>
+    </form>
+  ) : (
+    <p className="text-muted mt-4">
+      Connecte-toi pour ajouter un commentaire.
+    </p>
+  )}
+</div>
         </div>
     );
 }
