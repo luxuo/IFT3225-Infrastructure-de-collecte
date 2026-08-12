@@ -61,3 +61,10 @@ function dailyAudio(measurements) {
     });
     return hourlyData;
 }
+
+module.exports = {
+  crowdednessLevel,
+  classmentAmbiance,
+  dataVerification,
+  dailyAudio
+};
