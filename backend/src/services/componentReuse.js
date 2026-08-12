@@ -35,9 +35,10 @@ function classmentAmbiance(avgDb){
 
 // la fonction verifie si les mesures sont la, ou valide en general. highly reused
 function dataVerification(measurement) {
-    const checkPass = false;
-    if (measurement && measurement.length > 0) { 
+    let checkPass = false;
+    if (measurement && Array.isArray(measurement) && measurement.length > 0) { 
         checkPass = true;
+        return checkPass;
     }
     return checkPass;
 }
