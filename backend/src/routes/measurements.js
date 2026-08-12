@@ -4,7 +4,7 @@ const Measurement = require("../models/measurement");
 const Location = require("../models/location");
 const authentification = require("../middleware/authentification")
 const router = new express.Router();
-
+const { crowdednessLevel, classmentAmbiance, dataVerification, dailyAudio } = require("../services/crowdedness");
 
 // Prends les données collectées
 async function getData(ip){
@@ -73,11 +73,12 @@ router.get("/measurements/:locationId", async (req, res) => {
     const locationId = req.params.locationId.trim().toLowerCase();
     const measurements = await Measurement.find({ locationId });
 
-    if (!measurements || measurements.length === 0) { // pas de mesures
+    if (!dataVerification(measurements)) {
         return res.status(404).json({
-            error: `Aucune mesure trouvée pour l'emplacement : '${locationId}'`
+            error: `Aucune mesure trouvée pour '${locationId}'`
         });
     }
+    
     res.send({ locationId, measurements });
 });
 
@@ -98,30 +99,13 @@ router.get("/measurements/:locationId/busy-hours", async (req, res) => {
     const locationId = req.params.locationId.trim().toLowerCase();
     const measurement = await Measurement.find({ locationId });
 
-    if (!measurement || measurement.length === 0) { // pas de mesures
+    if (!dataVerification(measurement)) {
         return res.status(404).json({
-            error: `Aucune mesure trouvée pour l'emplacement : '${locationId}'`
+            error: `Aucune mesure trouvée pour '${locationId}'`
         });
     }
-
     // 
-    const hourlyData = Array.from({ length: 24 }, (_, hour) => ({
-        hour,
-        totalDbSum: 0,
-        totalDbCount: 0
-    }));
-
-    measurement.forEach(m => {
-        const date = new Date(m.timestamp);
-        const hour = date.getUTCHours();
-
-        if (m.noise_buffer && m.noise_buffer.length > 0) {
-            const bufferSum = m.noise_buffer.reduce((sum, val) => sum + val, 0);
-            hourlyData[hour].totalDbSum += bufferSum;
-            hourlyData[hour].totalDbCount += m.noise_buffer.length;
-        }
-    });
-
+    const hourlyData = dailyAudio(measurement, res);
 
     const busyHours = hourlyData
         .filter(item => item.totalDbCount > 0)
@@ -132,11 +116,7 @@ router.get("/measurements/:locationId/busy-hours", async (req, res) => {
             const endStr = (item.hour + 1) < 10 ? `0${item.hour + 1}:00` : `${item.hour + 1}:00`;
 
 
-            let noiseLevel = "neutre";
-            if (avgDb < 60) noiseLevel = "calme";
-            else if (avgDb >= 60 && avgDb < 70) noiseLevel = "moyen";
-            else if (avgDb >= 70 && avgDb < 80) noiseLevel = "modéré";
-            else if (avgDb >= 80) noiseLevel = "elevé";
+            const noiseLevel = classmentAmbiance(avgDb);
 
             return {
                 period: `${startStr}-${endStr}`,
@@ -171,9 +151,9 @@ router.get("/measurements/:locationId/crowdedness", async (req, res) => {
 
         const measurements = await Measurement.find({ locationId });
 
-        if (!measurements || measurements.length === 0) {
+        if (!dataVerification(measurements)) {
             return res.status(404).json({
-                error: `Aucune mesure trouvée pour l'emplacement : '${locationId}'`
+                error: `Aucune mesure trouvée pour '${locationId}'`
             });
         }
 
@@ -208,17 +188,7 @@ router.get("/measurements/:locationId/crowdedness", async (req, res) => {
                 const endHour = item.hour + 1;
                 const endStr = endHour < 10 ? `0${endHour}:00` : `${endHour}:00`;
 
-                let crowdedness = "vide";
-
-                if (averagePeople === 0) {
-                    crowdedness = "vide";
-                } else if (averagePeople < 7) {
-                    crowdedness = "faible";
-                } else if (averagePeople < 14) {
-                    crowdedness = "moyen";
-                } else {
-                    crowdedness = "eleve";
-                }
+                const crowdedness = crowdednessLevel(averagePeople);
 
                 return {
                     period: `${startStr}-${endStr}`,
@@ -288,12 +258,11 @@ router.get("/measurements/:locationId/recommendation", async (req, res) => {
 
         const measurements = await Measurement.find({ locationId });
 
-        if (!measurements || measurements.length === 0) {
+        if (!dataVerification(measurements)) {
             return res.status(404).json({
-                error: `Aucune donnée trouvée pour l'emplacement : '${locationId}'`
+                error: `Aucune mesure trouvée pour '${locationId}'`
             });
         }
-
 
         const dayMeasurements = measurements.filter(m => {
             const date = new Date(m.timestamp);
@@ -306,23 +275,9 @@ router.get("/measurements/:locationId/recommendation", async (req, res) => {
             });
         }
 
-        const hourlyData = Array.from({ length: 24 }, (_, hour) => ({
-            hour,
-            totalDbSum: 0,
-            totalDbCount: 0
-        }));
-
         // additionner la somme des decibels pour chaque heure
-        dayMeasurements.forEach(m => {
-            const date = new Date(m.timestamp);
-            const hour = date.getUTCHours();
-
-            if (m.noise_buffer && m.noise_buffer.length > 0) {
-                const bufferSum = m.noise_buffer.reduce((sum, val) => sum + val, 0);
-                hourlyData[hour].totalDbSum += bufferSum;
-                hourlyData[hour].totalDbCount += m.noise_buffer.length;
-            }
-        });
+        // update its a function now woopwoop
+        const hourlyData = dailyAudio(dayMeasurements, res);
 
         // moyenne la plus basse
         let bestHour = null;
@@ -370,9 +325,9 @@ router.get("/measurements/:locationId/:ambiance", async (req, res) => {
             ambiance: targetAmbiance
         });
 
-        if (!measurements || measurements.length === 0) {
+        if (!dataVerification(measurements)) {
             return res.status(404).json({
-                error: `Aucune donnée d'ambiance '${targetAmbiance}' trouvée pour '${locationId}'`
+                error: `Aucune mesure trouvée pour '${locationId}'`
             });
         }
 
