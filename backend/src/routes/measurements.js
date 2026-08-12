@@ -4,7 +4,7 @@ const Measurement = require("../models/measurement");
 const Location = require("../models/location");
 const authentification = require("../middleware/authentification")
 const router = new express.Router();
-const { crowdednessLevel, classmentAmbiance, dataVerification, dailyAudio } = require("../services/crowdedness");
+const { crowdednessLevel, classmentAmbiance, dataVerification, dailyAudio } = require("../services/componentReuse");
 
 // Prends les données collectées
 async function getData(ip){
