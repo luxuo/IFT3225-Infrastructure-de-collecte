@@ -35,14 +35,14 @@ function classmentAmbiance(avgDb){
 
 // la fonction verifie si les mesures sont la, ou valide en general. highly reused
 function dataVerification(measurement) {
-    checkPass == false;
+    const checkPass = false;
     if (measurement && measurement.length > 0) { 
         checkPass = true;
     }
     return checkPass;
 }
 
-function dailyAudio(measurements, res) {
+function dailyAudio(measurements) {
     const hourlyData = Array.from({ length: 24 }, (_, hour) => ({
             hour,
             totalDbSum: 0,
