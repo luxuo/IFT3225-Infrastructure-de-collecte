@@ -105,7 +105,7 @@ router.get("/measurements/:locationId/busy-hours", async (req, res) => {
         });
     }
     // 
-    const hourlyData = dailyAudio(measurement, res);
+    const hourlyData = dailyAudio(measurement);
 
     const busyHours = hourlyData
         .filter(item => item.totalDbCount > 0)
@@ -277,7 +277,7 @@ router.get("/measurements/:locationId/recommendation", async (req, res) => {
 
         // additionner la somme des decibels pour chaque heure
         // update its a function now woopwoop
-        const hourlyData = dailyAudio(dayMeasurements, res);
+        const hourlyData = dailyAudio(dayMeasurements);
 
         // moyenne la plus basse
         let bestHour = null;
