@@ -1,5 +1,6 @@
+import { API_URL } from "./url.js";
 export default async function createMeasurement(data, authToken) {
-    const res = await fetch("http://localhost:8383/phyphox/measurements", {
+    const res = await fetch(`${API_URL}/phyphox/measurements`, {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
