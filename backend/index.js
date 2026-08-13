@@ -27,6 +27,13 @@ app.get("/", (req, res) => {
     });
 });
 
+app.get("/debug", (req, res) => {
+    res.status(200).json({
+        message: "Latest backend version",
+        routesLoaded: true
+    });
+});
+
 app.use((req, res) => {
     return res.status(404).json({
         error: "Route introuvable"

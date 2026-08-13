@@ -15,7 +15,7 @@ export async function fetchLocations(forceRefresh = false) {
     return inFlightPromise;
   }
 
-  inFlightPromise = fetch("http://localhost:8383/locations")
+  inFlightPromise = fetch(`${API_URL}/locations`)
     .then((result) => {
       if (!result.ok) {
         throw new Error(`Impossible de charger les lignes (HTTP ${result.status}).`);
