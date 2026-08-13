@@ -1,6 +1,7 @@
+import { API_URL } from "./url.js";
 export async function fetchToken(req) {
   const endpoint = req.location?'/devices':'/devices/token'
-  const result = await fetch(`http://localhost:8383${endpoint}`, {
+  const result = await fetch(`${API_URL}${endpoint}`, {
         method: "POST",
         body: JSON.stringify(req),
         headers: {

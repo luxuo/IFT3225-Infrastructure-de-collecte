@@ -1,7 +1,7 @@
-
+import { API_URL } from "./url.js";
 
 export async function fetchMeasurements(token) {
-  const result = await fetch(`http://localhost:8383/user/measurements/me`, {
+  const result = await fetch(`${API_URL}/user/measurements/me`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }

@@ -1,5 +1,6 @@
+import { API_URL } from "./url.js";
 export async function fetchCurrentUser(token) {
-    const result = await fetch("http://localhost:8383/devices/me", {
+    const result = await fetch(`${API_URL}/devices/me`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
