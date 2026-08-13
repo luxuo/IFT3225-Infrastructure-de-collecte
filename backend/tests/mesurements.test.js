@@ -74,9 +74,30 @@ describe("Daily Audio", () => {
     });
     it("should return an array of 24 objects with hour, totalDbSum, and totalDbCount", () => {
         const measurements = [
-            { timestamp: "2024-06-01T00:00:00Z", noise_buffer: [50, 60, 70] },
+            { timestamp: "2024-06-01T00:00:00Z", noise_buffer: [10, 60, 70] },
         ];
         expect(dailyAudio(measurements)).toHaveLength(24);
+    });
+    it ("should correctly calculate totalDbSum and totalDbCount for each hour", () => {
+        const measurements = [
+            { timestamp: "2024-06-01T00:00:00Z", noise_buffer: [10, 60, 70] },
+            { timestamp: "2024-06-01T01:00:00Z", noise_buffer: [0, 90] },
+            { timestamp: "2024-06-01T00:30:00Z", noise_buffer: [30] }
+        ];
+        const result = dailyAudio(measurements);
+        expect(result[0].totalDbSum).toBe(170);
+        expect(result[0].totalDbCount).toBe(4);
+        expect(result[1].totalDbSum).toBe(90);
+        expect(result[1].totalDbCount).toBe(2);
+    });
+    it ("should handle measurements with no noise_buffer", () => {
+        const measurements = [
+            { timestamp: "2024-06-01T00:00:00Z", noise_buffer: [] },
+            { timestamp: "2024-06-01T01:00:00Z" }
+        ];
+        const result = dailyAudio(measurements);
+        expect(result[0].totalDbSum).toBe(0);
+        expect(result[0].totalDbCount).toBe(0);
     });
 });
 
