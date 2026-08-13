@@ -1,4 +1,4 @@
-import {API_URL} from "../url.js";
+import {API_URL} from "./url.js";
 
 export async function fetchComments(locationId) {
   const result = await fetch(`${API_URL}/comments/${locationId}`);
