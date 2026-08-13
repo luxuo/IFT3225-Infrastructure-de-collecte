@@ -4,7 +4,7 @@ let cachedLocations = null;
 let cachedAt = 0;
 let inFlightPromise = null;
 
-import { API_URL } from "../url.js";
+import { API_URL } from "../api/url.js";
 
 export async function fetchLocations(forceRefresh = false) {
   const now = Date.now();
