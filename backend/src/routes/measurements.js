@@ -4,7 +4,7 @@ const Measurement = require("../models/measurement");
 const Location = require("../models/location");
 const authentification = require("../middleware/authentification")
 const router = new express.Router();
-const { crowdednessLevel, classmentAmbiance, dataVerification, dailyAudio } = require("../services/componentReuse");
+const { crowdednessLevel, classmentAmbiance, dataVerification, dailyAudio, standarizeInput } = require("../services/componentReuse");
 
 // Prends les données collectées
 async function getData(ip){
@@ -70,7 +70,7 @@ router.post("/phyphox/measurements", authentification, async (req, res) => {
 
 // ENDPOINTS DE RESSOURCE
 router.get("/measurements/:locationId", async (req, res) => {
-    const locationId = req.params.locationId.trim().toLowerCase();
+    const locationId = standarizeInput(req.params.locationId);
     const measurements = await Measurement.find({ locationId });
 
     if (!dataVerification(measurements)) {
@@ -96,7 +96,7 @@ router.get("/user/measurements/me", authentification, async (req, res) => {
 
 // Get les heures d'achallandage
 router.get("/measurements/:locationId/busy-hours", async (req, res) => {
-    const locationId = req.params.locationId.trim().toLowerCase();
+    const locationId = standarizeInput(req.params.locationId);
     const measurement = await Measurement.find({ locationId });
 
     if (!dataVerification(measurement)) {
@@ -147,7 +147,7 @@ router.get("/measurements/:locationId/busy-hours", async (req, res) => {
 // get le niveau de densité de population selon l'heure
 router.get("/measurements/:locationId/crowdedness", async (req, res) => {
     try {
-        const locationId = req.params.locationId.trim().toLowerCase();
+        const locationId = standarizeInput(req.params.locationId);
 
         const measurements = await Measurement.find({ locationId });
 
@@ -230,11 +230,11 @@ router.get("/measurements/:locationId/crowdedness", async (req, res) => {
 // /measurements/:locationId/recommendation?type=study&jour=lundi
 router.get("/measurements/:locationId/recommendation", async (req, res) => {
     try {
-        const locationId = req.params.locationId.trim().toLowerCase();
+        const locationId = standarizeInput(req.params.locationId);
         if (req.query.type != "etude" && req.query.type != "study") {
             return res.status(400).send({ error: "Type de requête pas supportée. Veuillez utiliser ?type=etude&jour={votre jour de choix}" });
         }
-        const journee = req.query.jour.trim().toLowerCase();
+        const journee = standarizeInput(req.query.jour);
 
 
 
@@ -310,8 +310,8 @@ router.get("/measurements/:locationId/recommendation", async (req, res) => {
 
 router.get("/measurements/:locationId/:ambiance", async (req, res) => {
     try {
-        const locationId = req.params.locationId.trim().toLowerCase();
-        const targetAmbiance = req.params.ambiance.trim().toLowerCase();
+        const locationId = standarizeInput(req.params.locationId);
+        const targetAmbiance = standarizeInput(req.params.ambiance);
 
         const allowedAmbiances = ['calme', 'bruyant', 'social', 'excitant'];
         if (!allowedAmbiances.includes(targetAmbiance)) {

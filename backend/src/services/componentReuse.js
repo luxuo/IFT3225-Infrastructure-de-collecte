@@ -63,9 +63,21 @@ function dailyAudio(measurements) {
     return hourlyData;
 }
 
+function standarizeInput(input) {
+    if (typeof input !== "string" || input.trim() === "") {
+        throw new Error("Invalid input: must be a non-empty string");
+    }
+
+    if (typeof input === "string") {
+        return input.trim().toLowerCase();
+    }
+    return input;
+}
+
 module.exports = {
   crowdednessLevel,
   classmentAmbiance,
   dataVerification,
+  standarizeInput,
   dailyAudio
 };

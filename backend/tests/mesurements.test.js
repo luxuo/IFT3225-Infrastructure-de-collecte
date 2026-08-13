@@ -79,3 +79,19 @@ describe("Daily Audio", () => {
         expect(dailyAudio(measurements)).toHaveLength(24);
     });
 });
+
+let standarizeInput;
+describe("Standarize Input", () => {
+    beforeEach(() => {
+        standarizeInput = require("../src/services/componentReuse").standarizeInput;
+    });
+    it("should throw error for non-string input", () => {
+        expect(() => standarizeInput(123)).toThrow("Invalid input: must be a non-empty string");
+    });
+    it("should throw error for empty string input", () => {
+        expect(() => standarizeInput("")).toThrow("Invalid input: must be a non-empty string");
+    });
+    it("should return trimmed and lowercased string for valid input", () => {
+        expect(standarizeInput("  AAAAAa a  ")).toBe("aaaaaa a");
+    });
+});
