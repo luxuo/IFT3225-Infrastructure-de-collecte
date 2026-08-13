@@ -21,6 +21,12 @@ app.use(device);
 app.use(locations);
 app.use(comments);
 
+app.get("/", (req, res) => {
+    res.status(200).json({
+        message: "IFT3225 backend is running dies"
+    });
+});
+
 app.use((req, res) => {
     return res.status(404).json({
         error: "Route introuvable"
