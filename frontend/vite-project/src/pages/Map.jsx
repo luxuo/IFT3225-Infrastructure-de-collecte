@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
@@ -19,6 +19,8 @@ L.Icon.Default.mergeOptions({
 
 export default function Map() {
   const { locations, loading, error } = useLocations();
+  const [selectedAmbiance, setSelectedAmbiance] = useState("toutes");
+  const [locationsWithAmbiance, setLocationsWithAmbiance] = useState([]); 
 
   useEffect(() => {
   async function loadAmbiances() {
@@ -76,15 +78,22 @@ export default function Map() {
         Cliquez sur un icon pour consulter le portrait d’ambiance du lieu.
       </p>
       
-      <label for="filtreAmbiance">Quel ambiance voulez-vous?</label>
-      <select id="filtreAmbiance" onchange="updateMapFilter()">
+      <label htmlFor="filtreAmbiance">
+        Quelle ambiance voulez-vous ?
+      </label>
+
+      <select
+        id="filtreAmbiance"
+        value={selectedAmbiance}
+        onChange={(e) => setSelectedAmbiance(e.target.value)}
+      >
         <option value="toutes">Toutes</option>
         <option value="calme">Calme</option>
         <option value="social">Social</option>
         <option value="bruyant">Bruyant</option>
         <option value="excitant">Excitant</option>
       </select>
-
+      
       <MapContainer
         center={[45.5045, -73.613]}
         zoom={13}
