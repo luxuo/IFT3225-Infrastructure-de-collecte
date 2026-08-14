@@ -5,6 +5,8 @@ const Location = require("../models/location");
 const authentification = require("../middleware/authentification")
 const router = new express.Router();
 const { crowdednessLevel, classmentAmbiance, dataVerification, dailyAudio, standarizeInput } = require("../services/componentReuse");
+const { deleteCache} = require("../services/cache");
+
 
 // Prends les données collectées
 async function getData(ip){
@@ -26,6 +28,9 @@ router.post("/measurements", authentification, async (req, res) => {
         const location = await Location.exists(req.body.locationId);
         console.log(location)
         await measurement.save();
+
+        deleteCache("locations:all");
+
         res.status(201).send({ measurement });
         console.log("Création de la mesure effectuée avec succès !");
     } catch (e) {

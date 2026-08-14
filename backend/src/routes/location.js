@@ -2,6 +2,8 @@ const express = require("express");
 const authentification = require("../middleware/authentification");
 const Location = require("../models/location");
 const router = new express.Router();
+const { getCache, setCache } = require("../services/cache");
+
 
 // CREATE
 router.post("/locations", authentification, async (req, res) => {
@@ -17,8 +19,15 @@ router.post("/locations", authentification, async (req, res) => {
 
 // GET LOCAIONS
 router.get("/locations", async (req,res) =>{
+
+    const cacheKey = "locations:all";
+
+    const cached = getCache(cacheKey);
+    if (cached) return res.send(cached);
+
     try{
         const locations = await Location.find({});
+        setCache(cacheKey, locations, 120);
         res.send(locations);
     }catch (err){
         res.status(500).send(err);
