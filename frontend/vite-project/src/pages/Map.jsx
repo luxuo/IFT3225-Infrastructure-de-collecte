@@ -20,6 +20,54 @@ L.Icon.Default.mergeOptions({
 export default function Map() {
   const { locations, loading, error } = useLocations();
 
+  useEffect(() => {
+  async function loadAmbiances() {
+    if (!locations || locations.length === 0) {
+      return;
+    }
+
+    const enrichedLocations = await Promise.all(
+      locations.map(async (place) => {
+        try {
+          const result = await fetchLocation(place.id);
+
+          const measurements = result.measurements ?? [];
+
+            const latestMeasurement =
+              measurements.length > 0
+                ? [...measurements].sort(
+                    (a, b) =>
+                      new Date(b.timestamp) - new Date(a.timestamp)
+                  )[0]
+                : null;
+
+            return {
+              ...place,
+              ambiance: latestMeasurement?.ambiance ?? null
+            };
+
+          } catch (error) {
+            return {
+              ...place,
+              ambiance: null
+            };
+          }
+        })
+      );
+
+      setLocationsWithAmbiance(enrichedLocations);
+    }
+
+    loadAmbiances();
+  }, [locations]);
+  
+  const filteredLocations =
+  selectedAmbiance === "toutes"
+    ? locationsWithAmbiance
+    : locationsWithAmbiance.filter(
+        (place) => place.ambiance === selectedAmbiance
+      );
+      
   return (
     <main>
       <h1>Carte des lieux</h1>
@@ -28,6 +76,15 @@ export default function Map() {
         Cliquez sur un icon pour consulter le portrait d’ambiance du lieu.
       </p>
       
+      <label for="filtreAmbiance">Quel ambiance voulez-vous?</label>
+      <select id="filtreAmbiance" onchange="updateMapFilter()">
+        <option value="toutes">Toutes</option>
+        <option value="calme">Calme</option>
+        <option value="social">Social</option>
+        <option value="bruyant">Bruyant</option>
+        <option value="excitant">Excitant</option>
+      </select>
+
       <MapContainer
         center={[45.5045, -73.613]}
         zoom={13}
@@ -39,7 +96,7 @@ export default function Map() {
         />
 
         
-        {locations.map((place) => (
+        {filteredLocations.map((place) => (
           <LocationMarker key={place._id} place={place} />
         ))}
        
