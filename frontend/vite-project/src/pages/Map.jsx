@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
@@ -19,21 +19,27 @@ L.Icon.Default.mergeOptions({
 
 export default function Map() {
   const { locations, loading, error } = useLocations();
+
   const [selectedAmbiance, setSelectedAmbiance] = useState("toutes");
-  const [locationsWithAmbiance, setLocationsWithAmbiance] = useState([]); 
+  const [locationsWithAmbiance, setLocationsWithAmbiance] = useState([]);
+  const [loadingAmbiances, setLoadingAmbiances] = useState(true);
 
   useEffect(() => {
-  async function loadAmbiances() {
-    if (!locations || locations.length === 0) {
-      return;
-    }
+    async function loadAmbiances() {
+      if (!locations || locations.length === 0) {
+        setLocationsWithAmbiance([]);
+        setLoadingAmbiances(false);
+        return;
+      }
 
-    const enrichedLocations = await Promise.all(
-      locations.map(async (place) => {
-        try {
-          const result = await fetchLocation(place.id);
+      setLoadingAmbiances(true);
 
-          const measurements = result.measurements ?? [];
+      const enrichedLocations = await Promise.all(
+        locations.map(async (place) => {
+          try {
+            const result = await fetchLocation(place.id);
+
+            const measurements = result.measurements ?? [];
 
             const latestMeasurement =
               measurements.length > 0
@@ -45,12 +51,18 @@ export default function Map() {
 
             return {
               ...place,
+              latestMeasurement,
               ambiance: latestMeasurement?.ambiance ?? null
             };
+          } catch (err) {
+            console.error(
+              `Erreur lors du chargement du lieu ${place.id}:`,
+              err
+            );
 
-          } catch (error) {
             return {
               ...place,
+              latestMeasurement: null,
               ambiance: null
             };
           }
@@ -58,42 +70,71 @@ export default function Map() {
       );
 
       setLocationsWithAmbiance(enrichedLocations);
+      setLoadingAmbiances(false);
     }
 
     loadAmbiances();
   }, [locations]);
-  
+
   const filteredLocations =
-  selectedAmbiance === "toutes"
-    ? locationsWithAmbiance
-    : locationsWithAmbiance.filter(
-        (place) => place.ambiance === selectedAmbiance
-      );
-      
+    selectedAmbiance === "toutes"
+      ? locationsWithAmbiance
+      : locationsWithAmbiance.filter(
+          (place) =>
+            place.ambiance?.toLowerCase() ===
+            selectedAmbiance.toLowerCase()
+        );
+
+  if (loading) {
+    return (
+      <main>
+        <p>Chargement des lieux...</p>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main>
+        <p>Erreur lors du chargement des lieux : {error}</p>
+      </main>
+    );
+  }
+
   return (
     <main>
       <h1>Carte des lieux</h1>
 
       <p>
-        Cliquez sur un icon pour consulter le portrait d’ambiance du lieu.
+        Cliquez sur une icône pour consulter le portrait d’ambiance du lieu.
       </p>
-      
-      <label htmlFor="filtreAmbiance">
-        Quelle ambiance voulez-vous ?
-      </label>
 
-      <select
-        id="filtreAmbiance"
-        value={selectedAmbiance}
-        onChange={(e) => setSelectedAmbiance(e.target.value)}
-      >
-        <option value="toutes">Toutes</option>
-        <option value="calme">Calme</option>
-        <option value="social">Social</option>
-        <option value="bruyant">Bruyant</option>
-        <option value="excitant">Excitant</option>
-      </select>
-      
+      <div style={{ marginBottom: "15px" }}>
+        <label htmlFor="filtreAmbiance">
+          Quelle ambiance voulez-vous ?{" "}
+        </label>
+
+        <select
+          id="filtreAmbiance"
+          value={selectedAmbiance}
+          onChange={(e) => setSelectedAmbiance(e.target.value)}
+        >
+          <option value="toutes">Toutes</option>
+          <option value="calme">Calme</option>
+          <option value="social">Social</option>
+          <option value="bruyant">Bruyant</option>
+          <option value="excitant">Excitant</option>
+        </select>
+      </div>
+
+      {loadingAmbiances && <p>Chargement des ambiances...</p>}
+
+      {!loadingAmbiances &&
+        selectedAmbiance !== "toutes" &&
+        filteredLocations.length === 0 && (
+          <p>Aucun lieu trouvé avec cette ambiance.</p>
+        )}
+
       <MapContainer
         center={[45.5045, -73.613]}
         zoom={13}
@@ -104,93 +145,74 @@ export default function Map() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        
         {filteredLocations.map((place) => (
-          <LocationMarker key={place._id} place={place} />
+          <LocationMarker
+            key={place._id ?? place.id}
+            place={place}
+          />
         ))}
-       
       </MapContainer>
     </main>
-    
   );
 }
 
-
 function LocationMarker({ place }) {
-  const [measurements, setMeasurements] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const latestMeasurement = place.latestMeasurement;
 
-  async function loadAmbiance() {
-    if (measurements || loading) {
-      return;
-    }
+  const lat = Number(place.lat);
+  const lon = Number(place.lon);
 
-    try {
-      setLoading(true);
-      setError(null);
+  if (Number.isNaN(lat) || Number.isNaN(lon)) {
+    console.warn(
+      `Coordonnées invalides pour ${place.name}:`,
+      place.lat,
+      place.lon
+    );
 
-      const result = await fetchLocation(place.id);
-      setMeasurements(result.measurements);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    return null;
   }
 
-  const latestMeasurement =
-    measurements && measurements.length > 0
-      ? [...measurements].sort(
-          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-        )[0]
-      : null;
-
   return (
-    <Marker
-      position={[Number(place.lat), Number(place.lon)]}
-      eventHandlers={{
-        click: loadAmbiance
-      }}
-    >
+    <Marker position={[lat, lon]}>
       <Popup>
         <strong>{place.name}</strong>
 
-        {loading && <p>Chargement de l’ambiance...</p>}
-
-        {error && (
-          <p>
-            Probleme de données. Veuillez réessayer plus tard
-          </p>
-        )}
-
-        {!loading && !error && latestMeasurement && (
+        {latestMeasurement ? (
           <>
-            <p>Ambiance : {latestMeasurement.ambiance}</p>
+            <p>
+              Ambiance : {latestMeasurement.ambiance}
+            </p>
 
             <p>
-              Personnes autour : {latestMeasurement.surrounding_people}
+              Personnes autour :{" "}
+              {latestMeasurement.surrounding_people}
             </p>
 
             <p>
               Dernière mesure :{" "}
-              {new Date(latestMeasurement.timestamp).toLocaleString()}
+              {new Date(
+                latestMeasurement.timestamp
+              ).toLocaleString()}
             </p>
 
             <Link
               to={`/measurements/${place.id}`}
-              style={{ display: "inline-block", padding: "8px 12px", background: "#007bff", color: "white", textDecoration: "none", borderRadius: "4px" }}
+              style={{
+                display: "inline-block",
+                padding: "8px 12px",
+                background: "#007bff",
+                color: "white",
+                textDecoration: "none",
+                borderRadius: "4px"
+              }}
             >
               Portrait d’ambiance complet
             </Link>
           </>
-        )}
-
-        {!loading && !error && measurements?.length === 0 && (
-          <p>Aucune mesure disponible pour ce lieu</p>
+        ) : (
+          <p>Aucune mesure disponible pour ce lieu.</p>
         )}
       </Popup>
     </Marker>
   );
 }
-  
