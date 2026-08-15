@@ -102,6 +102,13 @@ router.get("/user/measurements/me", authentification, async (req, res) => {
 // Get les heures d'achallandage
 router.get("/measurements/:locationId/busy-hours", async (req, res) => {
     const locationId = standarizeInput(req.params.locationId);
+    const cacheKey = `busy-hours:${locationId}`;
+
+    const cached = getCache(cacheKey);
+    if (cached) {
+        return res.status(200).json(cached);
+    }
+
     const measurement = await Measurement.find({ locationId });
 
     if (!dataVerification(measurement)) {
@@ -139,6 +146,14 @@ router.get("/measurements/:locationId/busy-hours", async (req, res) => {
         const topPeriods = busyHours.slice(0, 2).map(p => p.period);
         summary = `Les périodes les plus bruyantes sont généralement entre ${topPeriods.join(' et ')}.`;
     }
+
+    const response = {
+            locationId,
+            busyHours,
+            summary
+        };
+
+    setCache(cacheKey, response, 300);
 
 
     return res.status(200).json({
