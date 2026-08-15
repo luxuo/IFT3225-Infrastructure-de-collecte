@@ -18,16 +18,15 @@ export default function useMeasurementCreation() {
   const [weather, setWeather] = useState(null);
   const [setting, setSetting] = useState(null);
   const [locationId, setLocation] = useState(null);
-  const [ip, setIp] = useState(null);
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const measurementData = {surrounding_people,ambiance,source_distance,weather,setting,locationId,ip};
+    const measurementData = {surrounding_people,ambiance,source_distance,weather,setting,locationId};
     setLoading(true);
     createMeasurement(measurementData, user.authToken).then((data) => setSuccess(true)).catch((err) => setError(err.message)).finally(() => setLoading(false));
   };
   
 
-  return { user, locationId, loading, loadingMeasure, error, success, setSuccess, setSurroundingPeople, setAmbiance, setSourceDistance, setWeather, setSetting, setLocation, setIp, handleSubmit};
+  return { user, locationId, loading, loadingMeasure, error, success, setSuccess, setSurroundingPeople, setAmbiance, setSourceDistance, setWeather, setSetting, setLocation, handleSubmit};
 }

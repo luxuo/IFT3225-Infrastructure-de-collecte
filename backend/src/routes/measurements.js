@@ -30,7 +30,6 @@ router.post("/measurements", authentification, async (req, res) => {
     try {
         const location = await Location.exists({id:req.body.locationId});
         await measurement.save();
-        console.log(measurement)
 
         deleteCache("locations:all");
 
