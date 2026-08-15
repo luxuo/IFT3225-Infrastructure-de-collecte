@@ -1,3 +1,4 @@
 # Ignore environment variables
 .env
 backend/node_modules
+frontent/vite-project/node_modules
