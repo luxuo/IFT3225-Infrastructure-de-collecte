@@ -4,6 +4,7 @@ import LocationList from '../components/LocationList.jsx';
 import { useLocations } from '../hooks/useLocations.js';
 import Loading from '../components/loading/Loading.jsx';
 import LoadError from '../components/loading/LoadError.jsx';
+import Map from '../components/Map.jsx';
 
 function MainPage() {
   const { locations, loading, error } = useLocations();
@@ -22,6 +23,7 @@ function MainPage() {
 
   return (
     <div className="container my-5">
+      <Map></Map>
       <LocationList locations={locations}></LocationList>
     </div>
   );

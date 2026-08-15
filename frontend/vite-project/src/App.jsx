@@ -5,7 +5,6 @@ import Header from './components/Header.jsx';
 import Login from './pages/Login'
 import Logout from './pages/Logout.jsx';
 import Signup from './pages/Signup.jsx';
-import Map from './pages/Map'
 import MeasurementCreation from './pages/MeasurementCreation.jsx';
 import User from './pages/User'
 import {
@@ -28,7 +27,6 @@ function App() {
           <Route path="login" element={<Login />}></Route>
           <Route path="signup" element={<Signup />}></Route>
           <Route path="logout" element={<Logout />}></Route>
-          <Route path="map" element={<Map />}></Route>
           <Route path="users" element={<User/>}></Route>
         </Route>
       </Routes>
