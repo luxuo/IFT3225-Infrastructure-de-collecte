@@ -23,11 +23,14 @@ function sleep(ms){
 
 // CREATE
 router.post("/measurements", authentification, async (req, res) => {
+    req.body.author = req.device.username
+    req.body.timestamp = new Date()
     const measurement = new Measurement(req.body);
+    
     try {
-        const location = await Location.exists(req.body.locationId);
-        console.log(location)
+        const location = await Location.exists({id:req.body.locationId});
         await measurement.save();
+        console.log(measurement)
 
         deleteCache("locations:all");
 
