@@ -40,7 +40,7 @@ export default function({ location_measurements }) {
     
     // Partie de la gestion des favoris
     const { locationId } = useParams();
-    const { user } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
     const [location, setLocation] = useState(null);
     const [isFavorite, setIsFavorite] = useState(false);
     const [locationName, setLocationName] = useState("");

@@ -14,7 +14,7 @@ export async function fetchCurrentUser(token) {
 }
 
 export async function toggleFavorite(locationId, token) {
-    const result = await fetch(`http://localhost:8383/devices/favorites/${locationId}`, {
+    const result = await fetch(`${API_URL}/devices/favorites/${locationId}`, {
         method: "POST",
         headers: {
             Authorization: `Bearer ${token}`,

@@ -5,7 +5,8 @@ const locations = require("./src/routes/location");
 const comments = require("./src/routes/comments");
 const express = require("express");
 const { connectDB } = require("./src/services/mongoose");
-const cors = require('cors');
+const express = require('express');
+const cors = require('cors'); 
 
 
 
@@ -14,6 +15,8 @@ connectDB().catch(err => console.log(err));
 const app = express();
 app.use(cors()); // Pour que le frontend puisse acceder au backend.
 const port = process.env.PORT || 8383;
+
+
 
 app.use(express.json());
 app.use(measurements);

@@ -5,7 +5,7 @@ const Location = require("../models/location");
 const authentification = require("../middleware/authentification")
 const router = new express.Router();
 const { crowdednessLevel, classmentAmbiance, dataVerification, dailyAudio, standarizeInput } = require("../services/componentReuse");
-const { deleteCache} = require("../services/cache");
+const { deleteCache, getCache, setCache} = require("../services/cache");
 
 
 // Prends les données collectées
