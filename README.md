@@ -367,3 +367,8 @@ PHRASE_PASS=<votre-phrase-secrete-jwt>
 ```
 
 Afin de préserver la sécurité des mots de passes, un fichier .env complet et fonctionnel se trouve dans le fichier .zip du projet soumis dans studium.
+
+## Le déploiement et les liens
+
+Le backend: https://ift3225-infrastructure-de-collecte-frvv.onrender.com
+Le frontend: https://ift3225-infrastructure-de-collecte-doc9.onrender.com
