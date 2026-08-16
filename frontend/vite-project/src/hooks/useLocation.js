@@ -3,7 +3,7 @@ import { fetchLocation } from "../api/location.js";
 
 const locationCache = new Map();
 const inFlightRequests = new Map();
-const CACHE_TTL_MS = Infinity;
+const CACHE_TTL_MS = 5 * 60 * 1000;
 
 export function useLocation(id) {
   const [location, setLocation] = useState([]);
