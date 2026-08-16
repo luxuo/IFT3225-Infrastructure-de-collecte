@@ -371,4 +371,5 @@ Afin de préserver la sécurité des mots de passes, un fichier .env complet et 
 ## Le déploiement et les liens
 
 Le backend: https://ift3225-infrastructure-de-collecte-frvv.onrender.com
+
 Le frontend: https://ift3225-infrastructure-de-collecte-doc9.onrender.com
