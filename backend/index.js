@@ -5,7 +5,6 @@ const locations = require("./src/routes/location");
 const comments = require("./src/routes/comments");
 const express = require("express");
 const { connectDB } = require("./src/services/mongoose");
-const express = require('express');
 const cors = require('cors'); 
 
 
