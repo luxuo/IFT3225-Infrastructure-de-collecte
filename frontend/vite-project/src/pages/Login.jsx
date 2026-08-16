@@ -19,7 +19,7 @@ export default function(){
             {user? <Navigate to='/'/> :
             <AccountForm statement={'Se Connecter'} handleClick={handleClick} setUsername={setUsername} setPassword={setPassword}/>}
             
-            {error? <LoadError errorMessage={'Nom d\'utilisateur ou mot de passe incorrect'}/>:<div></div>}
+            {error? <LoadError errorMessage={error}/>:<div></div>}
         </div>
     );
 }

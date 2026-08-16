@@ -25,6 +25,18 @@ router.get("/devices", async (req,res) =>{
     }
 });
 
+// DEVICE SEARCH
+router.post("/devices/search", async (req,res) =>{
+    try{
+        const device = await Device.exists({username:req.body.username});
+        if (device) res.send(device);
+        else res.status(204).send();
+    }catch (err){
+        res.status(500).send(err);
+    }
+});
+
+
 // GET TOKEN
 router.post("/devices/token", async (req,res) => {
     try{

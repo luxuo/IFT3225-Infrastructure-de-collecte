@@ -4,11 +4,13 @@ const validator = require("validator");
 const measurementSchema = new mongoose.Schema({
     noise_buffer:{
         type:[mongoose.Schema.Types.Double],
-        required: true
+        required: true,
+        default: [1.1]
     },
     time_buffer:{
         type:[mongoose.Schema.Types.Double],
         required: true,
+        default: [0.0],
         validator (v){
             if (v.length != this.noise_buffer.length){
                 throw new Error("Taille des buffers invalide: les listes ne sont pas de la même taille");
@@ -78,6 +80,20 @@ const measurementSchema = new mongoose.Schema({
     }
 }, {
     strict: "throw"
+});
+
+measurementSchema.pre("save", async function (){
+    if(this.$isDefault("time_buffer") || this.$isDefault("noise_buffer")){
+        let noise_level = 0.0
+        switch(this.ambiance){
+            case 'calme': noise_level = -35.0; break;
+            case 'social': noise_level = -55.0; break;
+            case 'neutre': noise_level = -40.0; break;
+            case 'bruyant': noise_level = -70.0; break;
+            case 'chaotique': noise_level = -80.0;break;
+        }
+        this.noise_buffer = [noise_level]
+    }
 });
 
 const Measurement = mongoose.model('Measurement', measurementSchema);
