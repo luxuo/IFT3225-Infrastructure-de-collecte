@@ -57,7 +57,28 @@ En ouvrant le site web, on arrive a la page principal qui affiche la liste des l
 
 L'entête a des boutons qui permette d'accéder différentes pages. Si on est authentifié le bouton "Se connecter" devient un accès à la page compte (le bouton affiche le nom d'utilisateur). En allant sur la page compte, on peut voir nos favoris.
 
-On peut cliquer sur le bouton soumettre une mesure qui va nous permettre de soumettre une mesure. Si on est pas authentifié ça va nous amener à la page de connexion. Pour faire un enregistrement il va falloir utiliser l'application phyphox sur notre téléphone.
+On peut cliquer sur le bouton soumettre une mesure qui va nous permettre de soumettre une mesure. Si on est pas authentifié ça va nous amener à la page de connexion.
+
+## Pour lancer les tests du backend
+`cd backend`
+`npm test`
+
+## .env.example
+
+```
+MONGO_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?appName=<AppName>
+PORT=8383
+PHRASE_PASS=<votre-phrase-secrete-jwt>
+```
+
+Afin de préserver la sécurité des mots de passes, un fichier .env complet et fonctionnel se trouve dans le fichier .zip du projet soumis dans studium.
+
+
+## Le déploiement et les liens
+
+Le backend: https://ift3225-infrastructure-de-collecte-frvv.onrender.com
+
+Le frontend: https://ift3225-infrastructure-de-collecte-doc9.onrender.com
 
 
 
@@ -357,19 +378,3 @@ Authorization: Bearer tokeninvalide
 Le code 403 est un code d'erreur qui a vérifié l'identité d'un individu, mais l'individu n'est pas authorisé à accéder la . Voir le 2e paragraphe de [https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401]
 
 
-
-## .env.example
-
-```
-MONGO_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?appName=<AppName>
-PORT=8383
-PHRASE_PASS=<votre-phrase-secrete-jwt>
-```
-
-Afin de préserver la sécurité des mots de passes, un fichier .env complet et fonctionnel se trouve dans le fichier .zip du projet soumis dans studium.
-
-## Le déploiement et les liens
-
-Le backend: https://ift3225-infrastructure-de-collecte-frvv.onrender.com
-
-Le frontend: https://ift3225-infrastructure-de-collecte-doc9.onrender.com
